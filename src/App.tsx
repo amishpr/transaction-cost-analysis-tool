@@ -1,8 +1,9 @@
 import { useMemo, useState } from "react";
 import "./App.css";
+import { CostByGroupChart } from "./components/CostByGroupChart";
 import { StatTile } from "./components/StatTile";
 import { generateSampleTrades } from "./lib/sampleData";
-import { computeMetrics, summarize } from "./lib/tca";
+import { computeMetrics, groupBy, summarize } from "./lib/tca";
 import type { RawTrade } from "./types";
 
 const fmtBps = (v: number) => `${v >= 0 ? "+" : ""}${v.toFixed(1)} bps`;
@@ -15,6 +16,8 @@ function App() {
   const allMetrics = useMemo(() => rawTrades.map(computeMetrics), [rawTrades]);
 
   const summary = useMemo(() => summarize(allMetrics), [allMetrics]);
+  const bySymbol = useMemo(() => groupBy(allMetrics, (t) => t.symbol), [allMetrics]);
+  const byStrategy = useMemo(() => groupBy(allMetrics, (t) => t.strategy), [allMetrics]);
 
   return (
     <main className="app">
@@ -54,6 +57,17 @@ function App() {
           label="Trades with price improvement"
           value={`${summary.pctPriceImprovement.toFixed(0)}%`}
         />
+      </section>
+
+      <section className="page-section">
+        <div className="section-header">
+          <h2 className="section-title">Execution cost</h2>
+          <span className="section-subtitle">Slippage vs. arrival price by symbol, strategy, and over time</span>
+        </div>
+        <div className="chart-grid">
+          <CostByGroupChart title="Cost by symbol" subtitle="Notional-weighted avg vs arrival price" data={bySymbol} />
+          <CostByGroupChart title="Cost by strategy" subtitle="Notional-weighted avg vs arrival price" data={byStrategy} />
+        </div>
       </section>
     </main>
   );
