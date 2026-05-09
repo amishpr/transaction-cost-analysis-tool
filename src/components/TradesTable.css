@@ -1,7 +1,7 @@
 .trades-table-wrap {
-  background: #ffffff;
-  border: 1px solid #d8dbe2;
-  border-radius: 6px;
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: 0;
   overflow: auto;
   max-height: 480px;
 }
@@ -15,27 +15,27 @@
 .trades-table th {
   position: sticky;
   top: 0;
-  background: #ffffff;
+  background: var(--surface-1);
   text-align: left;
   padding: 9px 12px;
-  color: #1d4ed8;
+  color: var(--amber);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.03em;
-  border-bottom: 1px solid #d8dbe2;
+  border-bottom: 1px solid var(--border);
   cursor: pointer;
   white-space: nowrap;
   user-select: none;
 }
 
 .trades-table th:hover {
-  color: #111827;
+  color: var(--text-primary);
 }
 
 .trades-table td {
   padding: 7px 12px;
-  border-bottom: 1px solid #e5e7eb;
-  color: #111827;
+  border-bottom: 1px solid var(--gridline);
+  color: var(--text-primary);
   white-space: nowrap;
 }
 
@@ -44,7 +44,7 @@
 }
 
 .trades-table tbody tr:hover {
-  background: color-mix(in srgb, #1d4ed8 6%, transparent);
+  background: color-mix(in srgb, var(--amber) 6%, transparent);
 }
 
 .num {
@@ -52,34 +52,34 @@
 }
 
 .cost-bad {
-  color: #dc2626;
+  color: var(--series-red);
 }
 
 .cost-good {
-  color: #2563eb;
+  color: var(--series-blue);
 }
 
 .side-tag {
   font-size: 11px;
   font-weight: 700;
   padding: 1px 6px;
-  border-radius: 6px;
+  border-radius: 0;
   border: 1px solid currentColor;
 }
 
 .side-buy {
-  color: #2563eb;
+  color: var(--series-blue);
 }
 
 .side-sell {
-  color: #ea580c;
+  color: var(--series-orange);
 }
 
 .badge {
   font-size: 10.5px;
   font-weight: 700;
   padding: 1px 7px;
-  border-radius: 6px;
+  border-radius: 0;
   border: 1px solid currentColor;
   display: inline-flex;
   align-items: center;
@@ -89,24 +89,24 @@
 }
 
 .badge-good {
-  color: #16a34a;
+  color: var(--status-good);
 }
 
 .badge-warning {
-  color: #ca8a04;
+  color: var(--status-warning);
 }
 
 .badge-critical {
-  color: #dc2626;
+  color: var(--status-critical);
 }
 
 .badge-neutral {
-  color: #6b7280;
+  color: var(--text-muted);
 }
 
 .trades-table-empty {
   padding: 32px;
   text-align: center;
-  color: #6b7280;
+  color: var(--text-muted);
   font-size: 13px;
 }

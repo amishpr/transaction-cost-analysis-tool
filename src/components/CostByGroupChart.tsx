@@ -39,11 +39,11 @@ export function CostByGroupChart({ title, subtitle, data }: CostByGroupChartProp
       legend={
         <>
           <span className="legend-item">
-            <span className="legend-swatch" style={{ background: "#dc2626" }} />
+            <span className="legend-swatch" style={{ background: "var(--series-red)" }} />
             Cost
           </span>
           <span className="legend-item">
-            <span className="legend-swatch" style={{ background: "#2563eb" }} />
+            <span className="legend-swatch" style={{ background: "var(--series-blue)" }} />
             Price improvement
           </span>
         </>
@@ -51,11 +51,11 @@ export function CostByGroupChart({ title, subtitle, data }: CostByGroupChartProp
     >
       <ResponsiveContainer width="100%" height={Math.max(160, sorted.length * rowHeight)}>
         <BarChart data={sorted} layout="vertical" margin={{ top: 4, right: 24, bottom: 4, left: 8 }}>
-          <CartesianGrid horizontal={false} stroke="#e5e7eb" />
+          <CartesianGrid horizontal={false} stroke="var(--gridline)" />
           <XAxis
             type="number"
-            tick={{ fill: "#6b7280", fontSize: 11 }}
-            axisLine={{ stroke: "#9ca3af" }}
+            tick={{ fill: "var(--text-muted)", fontSize: 11 }}
+            axisLine={{ stroke: "var(--baseline)" }}
             tickLine={false}
             tickFormatter={fmtTick}
           />
@@ -63,13 +63,13 @@ export function CostByGroupChart({ title, subtitle, data }: CostByGroupChartProp
             type="category"
             dataKey="key"
             width={124}
-            tick={{ fill: "#374151", fontSize: 11 }}
-            axisLine={{ stroke: "#9ca3af" }}
+            tick={{ fill: "var(--text-secondary)", fontSize: 11 }}
+            axisLine={{ stroke: "var(--baseline)" }}
             tickLine={false}
           />
-          <ReferenceLine x={0} stroke="#9ca3af" />
+          <ReferenceLine x={0} stroke="var(--baseline)" />
           <Tooltip
-            cursor={{ fill: "#e5e7eb", opacity: 0.5 }}
+            cursor={{ fill: "var(--gridline)", opacity: 0.5 }}
             content={({ active, payload }) => {
               const row = payload?.[0]?.payload as GroupStats | undefined;
               if (!row) return null;
@@ -91,7 +91,7 @@ export function CostByGroupChart({ title, subtitle, data }: CostByGroupChartProp
             {sorted.map((d) => (
               <Cell
                 key={d.key}
-                fill={d.avgArrivalBps >= 0 ? "#dc2626" : "#2563eb"}
+                fill={d.avgArrivalBps >= 0 ? "var(--series-red)" : "var(--series-blue)"}
               />
             ))}
           </Bar>

@@ -10,16 +10,16 @@
   flex-direction: column;
   gap: 4px;
   font-size: 11px;
-  color: #6b7280;
+  color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
 
 .filter-field select {
-  background: #ffffff;
-  color: #1d4ed8;
-  border: 1px solid #d8dbe2;
-  border-radius: 6px;
+  background: var(--surface-1);
+  color: var(--amber);
+  border: 1px solid var(--border);
+  border-radius: 0;
   padding: 6px 10px;
   font-size: 13px;
   font-family: inherit;
@@ -27,6 +27,6 @@
 }
 
 .filter-field select:focus {
-  outline: 1px solid #1d4ed8;
+  outline: 1px solid var(--amber);
   outline-offset: 1px;
 }

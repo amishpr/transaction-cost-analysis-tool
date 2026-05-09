@@ -28,11 +28,11 @@ export function SlippageTimeline({ trades }: SlippageTimelineProps) {
       legend={
         <>
           <span className="legend-item">
-            <span className="legend-swatch" style={{ background: "#2563eb" }} />
+            <span className="legend-swatch" style={{ background: "var(--series-blue)" }} />
             Buy
           </span>
           <span className="legend-item">
-            <span className="legend-swatch" style={{ background: "#ea580c" }} />
+            <span className="legend-swatch" style={{ background: "var(--series-orange)" }} />
             Sell
           </span>
         </>
@@ -40,28 +40,28 @@ export function SlippageTimeline({ trades }: SlippageTimelineProps) {
     >
       <ResponsiveContainer width="100%" height={260}>
         <ScatterChart margin={{ top: 8, right: 16, bottom: 4, left: 4 }}>
-          <CartesianGrid stroke="#e5e7eb" />
+          <CartesianGrid stroke="var(--gridline)" />
           <XAxis
             dataKey="date"
             type="category"
             allowDuplicatedCategory={false}
-            tick={{ fill: "#6b7280", fontSize: 11 }}
-            axisLine={{ stroke: "#9ca3af" }}
+            tick={{ fill: "var(--text-muted)", fontSize: 11 }}
+            axisLine={{ stroke: "var(--baseline)" }}
             tickLine={false}
             minTickGap={30}
           />
           <YAxis
             dataKey="arrivalSlippageBps"
             name="Slippage"
-            tick={{ fill: "#6b7280", fontSize: 11 }}
-            axisLine={{ stroke: "#9ca3af" }}
+            tick={{ fill: "var(--text-muted)", fontSize: 11 }}
+            axisLine={{ stroke: "var(--baseline)" }}
             tickLine={false}
             tickFormatter={(v: number) => v.toFixed(0)}
           />
           <ZAxis dataKey="notional" range={[20, 200]} />
-          <ReferenceLine y={0} stroke="#9ca3af" />
+          <ReferenceLine y={0} stroke="var(--baseline)" />
           <Tooltip
-            cursor={{ stroke: "#9ca3af", strokeDasharray: "3 3" }}
+            cursor={{ stroke: "var(--baseline)", strokeDasharray: "3 3" }}
             content={({ active, payload }) => {
               const row = payload?.[0]?.payload as TradeMetrics | undefined;
               if (!row) return null;
@@ -79,10 +79,10 @@ export function SlippageTimeline({ trades }: SlippageTimelineProps) {
               );
             }}
           />
-          <Scatter data={buys} fill="#2563eb" fillOpacity={0.75} isAnimationActive={false} />
+          <Scatter data={buys} fill="var(--series-blue)" fillOpacity={0.75} isAnimationActive={false} />
           <Scatter
             data={sells}
-            fill="#ea580c"
+            fill="var(--series-orange)"
             fillOpacity={0.75}
             isAnimationActive={false}
           />

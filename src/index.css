@@ -1,6 +1,39 @@
+/* Default theme: Bloomberg-terminal-style palette. Black field, amber chrome, white data. */
 :root {
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  color-scheme: light;
+  color-scheme: dark;
+
+  --surface-1: #000000;
+  --page-plane: #000000;
+  --text-primary: #e8e8e0;
+  --text-secondary: #ff9900;
+  --text-muted: #7a7a72;
+  --amber: #ff9900;
+  --on-amber: #000000;
+  --gridline: #2a2a24;
+  --baseline: #4d4d44;
+  --border: rgba(255, 153, 0, 0.35);
+  --tooltip-bg: #050502;
+  --tooltip-glow: rgba(255, 153, 0, 0.2);
+
+  /* Buy = cyan, Sell = amber; cost polarity = red/cyan (warm/cool poles). */
+  --series-blue: #00e5ff;
+  --series-orange: #ffb000;
+  --series-aqua: #00e5ff;
+  --series-yellow: #ffd400;
+  --series-magenta: #ff5fd8;
+  --series-green: #00ff66;
+  --series-violet: #b98cff;
+  --series-red: #ff3b30;
+
+  --status-good: #00ff66;
+  --status-warning: #ffb000;
+  --status-serious: #ff8a3d;
+  --status-critical: #ff3b30;
+
+  --diverging-neutral: #262620;
+
+  font-family: ui-monospace, "SF Mono", "Roboto Mono", "IBM Plex Mono", Menlo, Consolas,
+    "Liberation Mono", monospace;
 }
 
 * {
@@ -9,8 +42,9 @@
 
 body {
   margin: 0;
-  background: #f5f6f8;
-  color: #111827;
+  background: var(--page-plane);
+  color: var(--text-primary);
+  font-variant-numeric: proportional-nums;
 }
 
 #root {

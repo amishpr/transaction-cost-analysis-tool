@@ -26,23 +26,23 @@ export function SlippageHistogram({ values }: SlippageHistogramProps) {
     >
       <ResponsiveContainer width="100%" height={260}>
         <BarChart data={bins} margin={{ top: 8, right: 16, bottom: 4, left: 4 }}>
-          <CartesianGrid vertical={false} stroke="#e5e7eb" />
+          <CartesianGrid vertical={false} stroke="var(--gridline)" />
           <XAxis
             dataKey="from"
-            tick={{ fill: "#6b7280", fontSize: 11 }}
-            axisLine={{ stroke: "#9ca3af" }}
+            tick={{ fill: "var(--text-muted)", fontSize: 11 }}
+            axisLine={{ stroke: "var(--baseline)" }}
             tickLine={false}
             tickFormatter={(v: number) => v.toFixed(0)}
           />
           <YAxis
-            tick={{ fill: "#6b7280", fontSize: 11 }}
+            tick={{ fill: "var(--text-muted)", fontSize: 11 }}
             axisLine={false}
             tickLine={false}
             allowDecimals={false}
           />
-          <ReferenceLine x={0} stroke="#9ca3af" />
+          <ReferenceLine x={0} stroke="var(--baseline)" />
           <Tooltip
-            cursor={{ fill: "#e5e7eb", opacity: 0.5 }}
+            cursor={{ fill: "var(--gridline)", opacity: 0.5 }}
             content={({ active, payload }) => {
               const row = payload?.[0]?.payload as
                 | { from: number; to: number; count: number }
@@ -59,7 +59,7 @@ export function SlippageHistogram({ values }: SlippageHistogramProps) {
           />
           <Bar
             dataKey="count"
-            fill="#2563eb"
+            fill="var(--series-blue)"
             radius={[4, 4, 0, 0]}
             maxBarSize={28}
             isAnimationActive={false}
