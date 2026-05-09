@@ -6,6 +6,8 @@ import { SlippageHistogram } from "./components/SlippageHistogram";
 import { SlippageTimeline } from "./components/SlippageTimeline";
 import { StatTile } from "./components/StatTile";
 import { TradesTable } from "./components/TradesTable";
+import { UploadPanel } from "./components/UploadPanel";
+import { downloadCsv, parseTradesCsv, tradesToCsv } from "./lib/csv";
 import { generateSampleTrades } from "./lib/sampleData";
 import { computeMetrics, groupBy, summarize } from "./lib/tca";
 import type { Filters, RawTrade } from "./types";
@@ -15,7 +17,8 @@ const fmtUsd = (v: number) =>
   v.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
 
 function App() {
-  const [rawTrades] = useState<RawTrade[]>(() => generateSampleTrades());
+  const [rawTrades, setRawTrades] = useState<RawTrade[]>(() => generateSampleTrades());
+  const [error, setError] = useState<string | null>(null);
   const [filters, setFilters] = useState<Filters>({ symbol: "ALL", side: "ALL", strategy: "ALL" });
 
   const allMetrics = useMemo(() => rawTrades.map(computeMetrics), [rawTrades]);
@@ -44,6 +47,18 @@ function App() {
   const bySymbol = useMemo(() => groupBy(filtered, (t) => t.symbol), [filtered]);
   const byStrategy = useMemo(() => groupBy(filtered, (t) => t.strategy), [filtered]);
 
+  const handleFile = async (file: File) => {
+    try {
+      const text = await file.text();
+      const trades = parseTradesCsv(text);
+      setRawTrades(trades);
+      setFilters({ symbol: "ALL", side: "ALL", strategy: "ALL" });
+      setError(null);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Could not parse that file.");
+    }
+  };
+
   return (
     <main className="app">
       <header className="app-header">
@@ -57,6 +72,17 @@ function App() {
           <p>TRANSACTION COST ANALYSIS — SLIPPAGE VS. ARRIVAL PRICE AND VWAP</p>
         </div>
       </header>
+
+      <UploadPanel
+        onFile={handleFile}
+        onLoadSample={() => {
+          setRawTrades(generateSampleTrades());
+          setFilters({ symbol: "ALL", side: "ALL", strategy: "ALL" });
+          setError(null);
+        }}
+        onExport={() => downloadCsv("tca-trades.csv", tradesToCsv(filtered))}
+        error={error}
+      />
 
       <FilterBar filters={filters} onChange={setFilters} symbols={symbols} strategies={strategies} />
 
