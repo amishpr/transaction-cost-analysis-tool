@@ -1,0 +1,39 @@
+.stat-tile {
+  background: #ffffff;
+  border: 1px solid #d8dbe2;
+  border-radius: 6px;
+  padding: 14px 16px;
+  min-width: 0;
+}
+
+.stat-tile-label {
+  font-size: 12px;
+  color: #374151;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 8px;
+}
+
+.stat-tile-value {
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1.15;
+  color: #111827;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.stat-tile-value.tone-good {
+  color: #16a34a;
+}
+
+.stat-tile-value.tone-bad {
+  color: #dc2626;
+}
+
+.stat-tile-sublabel {
+  margin-top: 6px;
+  font-size: 12px;
+  color: #6b7280;
+}
