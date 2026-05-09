@@ -1,6 +1,8 @@
 import { useMemo, useState } from "react";
 import "./App.css";
 import { CostByGroupChart } from "./components/CostByGroupChart";
+import { SlippageHistogram } from "./components/SlippageHistogram";
+import { SlippageTimeline } from "./components/SlippageTimeline";
 import { StatTile } from "./components/StatTile";
 import { generateSampleTrades } from "./lib/sampleData";
 import { computeMetrics, groupBy, summarize } from "./lib/tca";
@@ -67,6 +69,8 @@ function App() {
         <div className="chart-grid">
           <CostByGroupChart title="Cost by symbol" subtitle="Notional-weighted avg vs arrival price" data={bySymbol} />
           <CostByGroupChart title="Cost by strategy" subtitle="Notional-weighted avg vs arrival price" data={byStrategy} />
+          <SlippageHistogram values={allMetrics.map((t) => t.arrivalSlippageBps)} />
+          <SlippageTimeline trades={allMetrics} />
         </div>
       </section>
     </main>
