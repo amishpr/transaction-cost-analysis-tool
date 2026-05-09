@@ -1,0 +1,32 @@
+.filter-bar {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  align-items: flex-end;
+}
+
+.filter-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 11px;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.filter-field select {
+  background: #ffffff;
+  color: #1d4ed8;
+  border: 1px solid #d8dbe2;
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 13px;
+  font-family: inherit;
+  min-width: 140px;
+}
+
+.filter-field select:focus {
+  outline: 1px solid #1d4ed8;
+  outline-offset: 1px;
+}
