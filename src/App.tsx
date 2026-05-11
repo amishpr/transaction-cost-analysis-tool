@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import "./App.css";
+import { AboutPanel } from "./components/AboutPanel";
 import { CostByGroupChart } from "./components/CostByGroupChart";
 import { FilterBar } from "./components/FilterBar";
 import { SlippageHistogram } from "./components/SlippageHistogram";
@@ -72,6 +73,8 @@ function App() {
           <p>TRANSACTION COST ANALYSIS — SLIPPAGE VS. ARRIVAL PRICE AND VWAP</p>
         </div>
       </header>
+
+      <AboutPanel />
 
       <UploadPanel
         onFile={handleFile}

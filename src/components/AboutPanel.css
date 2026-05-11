@@ -1,0 +1,52 @@
+.about-panel {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  gap: 24px;
+  padding-bottom: 6px;
+}
+
+@media (max-width: 860px) {
+  .about-panel {
+    grid-template-columns: 1fr;
+  }
+}
+
+.about-text p {
+  margin: 0 0 10px;
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: var(--text-primary);
+}
+
+.about-text p:last-child {
+  margin-bottom: 0;
+}
+
+.about-term {
+  color: var(--amber);
+  font-weight: 700;
+}
+
+.about-glossary {
+  margin: 0;
+  border-left: 1px solid var(--gridline);
+  padding-left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.about-glossary dt {
+  color: var(--amber);
+  font-size: 11.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.about-glossary dd {
+  margin: 2px 0 0;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
