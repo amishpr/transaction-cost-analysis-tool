@@ -3,12 +3,15 @@ import "./App.css";
 import { AboutPanel } from "./components/AboutPanel";
 import { CostByGroupChart } from "./components/CostByGroupChart";
 import { FilterBar } from "./components/FilterBar";
+import { ShareBreakdownChart } from "./components/ShareBreakdownChart";
 import { SlippageHistogram } from "./components/SlippageHistogram";
 import { SlippageTimeline } from "./components/SlippageTimeline";
 import { StatTile } from "./components/StatTile";
+import { SymbolImpactBubbleChart } from "./components/SymbolImpactBubbleChart";
 import { TradesTable } from "./components/TradesTable";
 import { UploadPanel } from "./components/UploadPanel";
 import { downloadCsv, parseTradesCsv, tradesToCsv } from "./lib/csv";
+import { classifySymbol } from "./lib/refData";
 import { generateSampleTrades } from "./lib/sampleData";
 import { computeMetrics, groupBy, summarize } from "./lib/tca";
 import type { Filters, RawTrade } from "./types";
@@ -47,6 +50,15 @@ function App() {
   const summary = useMemo(() => summarize(filtered), [filtered]);
   const bySymbol = useMemo(() => groupBy(filtered, (t) => t.symbol), [filtered]);
   const byStrategy = useMemo(() => groupBy(filtered, (t) => t.strategy), [filtered]);
+  const byVenue = useMemo(() => groupBy(filtered, (t) => t.venue), [filtered]);
+  const bySector = useMemo(
+    () => groupBy(filtered, (t) => classifySymbol(t.symbol).sector),
+    [filtered],
+  );
+  const byCapTier = useMemo(
+    () => groupBy(filtered, (t) => classifySymbol(t.symbol).capTier),
+    [filtered],
+  );
 
   const handleFile = async (file: File) => {
     try {
@@ -93,6 +105,11 @@ function App() {
         <StatTile label="Trades analyzed" value={summary.tradeCount.toLocaleString()} />
         <StatTile label="Total notional" value={fmtUsd(summary.totalNotional)} />
         <StatTile
+          label="Total shares"
+          value={summary.totalQuantity.toLocaleString()}
+          sublabel="Basket quantity"
+        />
+        <StatTile
           label="Avg slippage vs arrival"
           value={fmtBps(summary.avgArrivalBps)}
           sublabel="Notional-weighted"
@@ -125,6 +142,31 @@ function App() {
           <CostByGroupChart title="Cost by strategy" subtitle="Notional-weighted avg vs arrival price" data={byStrategy} />
           <SlippageHistogram values={filtered.map((t) => t.arrivalSlippageBps)} />
           <SlippageTimeline trades={filtered} />
+        </div>
+      </section>
+
+      <section className="page-section">
+        <div className="section-header">
+          <h2 className="section-title">Portfolio composition</h2>
+          <span className="section-subtitle">Venue routing, sector, market cap, and size vs. slippage</span>
+        </div>
+        <div className="chart-grid">
+          <ShareBreakdownChart
+            title="Venue breakdown"
+            subtitle="Share of notional by execution venue"
+            data={byVenue}
+          />
+          <SymbolImpactBubbleChart data={bySymbol} />
+          <ShareBreakdownChart
+            title="Sector breakdown"
+            subtitle="Share of notional by sector"
+            data={bySector}
+          />
+          <ShareBreakdownChart
+            title="Market cap breakdown"
+            subtitle="Share of notional by cap tier"
+            data={byCapTier}
+          />
         </div>
       </section>
 
