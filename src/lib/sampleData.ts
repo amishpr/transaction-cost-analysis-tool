@@ -25,8 +25,22 @@ const SYMBOLS: { symbol: string; basePrice: number }[] = [
   { symbol: "OXM", basePrice: 45 },
 ];
 
-const STRATEGIES = ["VWAP", "TWAP", "POV", "Dark Pool", "Market"];
-const VENUES = ["NASDAQ", "NYSE", "ARCA", "BATS", "IEX", "EDGX"];
+// "Implementation Shortfall" replaces the old "Market" entry (an order type,
+// not an algo strategy) and "Dark Aggregator" replaces "Dark Pool" (a venue
+// concept, not a strategy) to match how execution desks actually name these.
+const STRATEGIES = ["VWAP", "TWAP", "POV", "Dark Aggregator", "Implementation Shortfall"];
+const VENUES = [
+  "NASDAQ",
+  "NYSE",
+  "UBS",
+  "Goldman Sachs Dark Pool",
+  "OneChronos",
+  "Citi",
+  "Barclays",
+  "Jane Street",
+  "Old Mission",
+  "Citadel Securities",
+];
 
 export function generateSampleTrades(count = 160, seed = 42): RawTrade[] {
   const rand = mulberry32(seed);
@@ -48,14 +62,14 @@ export function generateSampleTrades(count = 160, seed = 42): RawTrade[] {
     const arrivalPrice = +(basePrice * (1 + drift)).toFixed(2);
 
     // Strategy affects typical slippage magnitude: passive strategies
-    // (TWAP/VWAP/Dark Pool) tend to track benchmarks more closely than an
-    // urgent market order, plus general market noise.
+    // (TWAP/VWAP/Dark Aggregator) tend to track benchmarks more closely than
+    // an urgent Implementation Shortfall fill, plus general market noise.
     const strategyNoise: Record<string, number> = {
       VWAP: 4,
       TWAP: 5,
       POV: 6,
-      "Dark Pool": 3,
-      Market: 12,
+      "Dark Aggregator": 3,
+      "Implementation Shortfall": 12,
     };
     const noiseBps = strategyNoise[strategy] ?? 6;
 
