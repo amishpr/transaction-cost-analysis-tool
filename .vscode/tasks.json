@@ -1,0 +1,66 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "dev",
+      "type": "npm",
+      "script": "dev",
+      "isBackground": true,
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "group": "tca-analyzer"
+      },
+      "problemMatcher": {
+        "owner": "vite",
+        "pattern": {
+          "regexp": "^ERROR.*$"
+        },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "^\\s*>\\s*vite\\s*$",
+          "endsPattern": "ready in \\d+ ms"
+        }
+      }
+    },
+    {
+      "label": "build",
+      "type": "npm",
+      "script": "build",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "group": "tca-analyzer"
+      },
+      "problemMatcher": ["$tsc"]
+    },
+    {
+      "label": "lint",
+      "type": "npm",
+      "script": "lint",
+      "group": "test",
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "group": "tca-analyzer"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "preview",
+      "type": "npm",
+      "script": "preview",
+      "isBackground": true,
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "group": "tca-analyzer"
+      },
+      "problemMatcher": []
+    }
+  ]
+}
