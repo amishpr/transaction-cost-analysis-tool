@@ -12,17 +12,20 @@ function mulberry32(seed: number) {
   };
 }
 
-const SYMBOLS: { symbol: string; basePrice: number }[] = [
-  { symbol: "AAPL", basePrice: 228 },
-  { symbol: "MSFT", basePrice: 421 },
-  { symbol: "GOOGL", basePrice: 172 },
-  { symbol: "AMZN", basePrice: 186 },
-  { symbol: "NVDA", basePrice: 118 },
-  { symbol: "TSLA", basePrice: 246 },
-  { symbol: "META", basePrice: 512 },
-  { symbol: "JPM", basePrice: 214 },
-  { symbol: "PRGO", basePrice: 28 },
-  { symbol: "OXM", basePrice: 45 },
+const SYMBOLS: { symbol: string; basePrice: number; sizeMultiplier: number }[] = [
+  { symbol: "AAPL", basePrice: 228, sizeMultiplier: 1 },
+  { symbol: "MSFT", basePrice: 421, sizeMultiplier: 1 },
+  { symbol: "GOOGL", basePrice: 172, sizeMultiplier: 1 },
+  { symbol: "AMZN", basePrice: 186, sizeMultiplier: 1 },
+  { symbol: "NVDA", basePrice: 118, sizeMultiplier: 1 },
+  { symbol: "TSLA", basePrice: 246, sizeMultiplier: 1 },
+  { symbol: "META", basePrice: 512, sizeMultiplier: 1 },
+  { symbol: "JPM", basePrice: 214, sizeMultiplier: 1 },
+  // Mid/small caps trade at a fraction of the mega-cap price, so clip size
+  // is scaled up to keep notional per trade in a comparable range, the way
+  // a desk sizing orders by target dollar exposure actually would.
+  { symbol: "PRGO", basePrice: 28, sizeMultiplier: 6 },
+  { symbol: "OXM", basePrice: 45, sizeMultiplier: 4 },
 ];
 
 // "Implementation Shortfall" replaces the old "Market" entry (an order type,
@@ -48,7 +51,7 @@ export function generateSampleTrades(count = 160, seed = 42): RawTrade[] {
   const trades: RawTrade[] = [];
 
   for (let i = 0; i < count; i++) {
-    const { symbol, basePrice } = SYMBOLS[Math.floor(rand() * SYMBOLS.length)];
+    const { symbol, basePrice, sizeMultiplier } = SYMBOLS[Math.floor(rand() * SYMBOLS.length)];
     const side: Side = rand() > 0.5 ? "BUY" : "SELL";
     const strategy = STRATEGIES[Math.floor(rand() * STRATEGIES.length)];
     const venue = VENUES[Math.floor(rand() * VENUES.length)];
@@ -73,9 +76,17 @@ export function generateSampleTrades(count = 160, seed = 42): RawTrade[] {
     };
     const noiseBps = strategyNoise[strategy] ?? 6;
 
-    const quantity = Math.round((200 + rand() * 4800) / 10) * 10;
+    // Draw a clip size on a common scale, then apply the symbol's size
+    // multiplier for its actual share count. Impact is judged against the
+    // common scale so a cheaper name with more shares per trade doesn't
+    // look artificially high-impact next to a mega-cap.
+    const baseClip = Math.round((200 + rand() * 4800) / 10) * 10;
+    const quantity = baseClip * sizeMultiplier;
+    // Market impact: larger clips tend to move the price against you, on
+    // top of ordinary strategy noise, so slippage isn't independent of size.
+    const impactBps = Math.max(0, (baseClip - 2000) / 1000) * 0.5;
 
-    const slippageBps = (rand() - 0.42) * noiseBps; // slight adverse bias, like real desks
+    const slippageBps = (rand() - 0.42) * noiseBps + impactBps; // slight adverse bias, like real desks
     const sign = side === "BUY" ? 1 : -1;
     const execPrice = +(arrivalPrice * (1 + (sign * slippageBps) / 10000)).toFixed(2);
 
