@@ -10,7 +10,8 @@ import { StatTile } from "./components/StatTile";
 import { SymbolImpactBubbleChart } from "./components/SymbolImpactBubbleChart";
 import { TradesTable } from "./components/TradesTable";
 import { UploadPanel } from "./components/UploadPanel";
-import { downloadCsv, parseTradesCsv, tradesToCsv } from "./lib/csv";
+import { downloadCsv, tradesToCsv } from "./lib/csv";
+import { parseTradesFile } from "./lib/fileImport";
 import { classifySymbol } from "./lib/refData";
 import { generateSampleTrades } from "./lib/sampleData";
 import { computeMetrics, groupBy, summarize } from "./lib/tca";
@@ -62,8 +63,7 @@ function App() {
 
   const handleFile = async (file: File) => {
     try {
-      const text = await file.text();
-      const trades = parseTradesCsv(text);
+      const trades = await parseTradesFile(file);
       setRawTrades(trades);
       setFilters({ symbol: "ALL", side: "ALL", strategy: "ALL" });
       setError(null);

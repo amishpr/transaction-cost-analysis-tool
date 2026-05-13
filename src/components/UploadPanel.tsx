@@ -29,7 +29,7 @@ export function UploadPanel({ onFile, onLoadSample, onExport, error }: UploadPan
         }}
         onClick={() => fileInputRef.current?.click()}
       >
-        <span className="dropzone-title">Drop a trades CSV file, or click to browse</span>
+        <span className="dropzone-title">Drop a trades CSV or Excel file, or click to browse</span>
         <span className="dropzone-subtitle">
           Columns: id, date, symbol, side, quantity, arrivalPrice, execPrice, vwapPrice, venue,
           strategy
@@ -37,7 +37,7 @@ export function UploadPanel({ onFile, onLoadSample, onExport, error }: UploadPan
         <input
           ref={fileInputRef}
           type="file"
-          accept=".csv,text/csv"
+          accept=".csv,.xlsx,.xls,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel"
           hidden
           onChange={(e) => {
             const file = e.target.files?.[0];
