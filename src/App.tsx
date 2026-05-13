@@ -8,6 +8,7 @@ import { SlippageHistogram } from "./components/SlippageHistogram";
 import { SlippageTimeline } from "./components/SlippageTimeline";
 import { StatTile } from "./components/StatTile";
 import { SymbolImpactBubbleChart } from "./components/SymbolImpactBubbleChart";
+import { ThemeToggle } from "./components/ThemeToggle";
 import { TradesTable } from "./components/TradesTable";
 import { UploadPanel } from "./components/UploadPanel";
 import { downloadCsv, tradesToCsv } from "./lib/csv";
@@ -15,6 +16,7 @@ import { parseTradesFile } from "./lib/fileImport";
 import { classifySymbol } from "./lib/refData";
 import { generateSampleTrades } from "./lib/sampleData";
 import { computeMetrics, groupBy, summarize } from "./lib/tca";
+import { useTheme } from "./lib/useTheme";
 import type { Filters, RawTrade } from "./types";
 
 const fmtBps = (v: number) => `${v >= 0 ? "+" : ""}${v.toFixed(1)} bps`;
@@ -22,6 +24,7 @@ const fmtUsd = (v: number) =>
   v.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
 
 function App() {
+  const { theme, toggleTheme } = useTheme();
   const [rawTrades, setRawTrades] = useState<RawTrade[]>(() => generateSampleTrades());
   const [error, setError] = useState<string | null>(null);
   const [filters, setFilters] = useState<Filters>({ symbol: "ALL", side: "ALL", strategy: "ALL" });
@@ -84,6 +87,7 @@ function App() {
           </h1>
           <p>TRANSACTION COST ANALYSIS — SLIPPAGE VS. ARRIVAL PRICE AND VWAP</p>
         </div>
+        <ThemeToggle theme={theme} onToggle={toggleTheme} />
       </header>
 
       <AboutPanel />
