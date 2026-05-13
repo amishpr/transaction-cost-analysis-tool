@@ -1,0 +1,65 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Pages deployments need these three permissions and nothing more.
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Let a running deploy finish, but skip any older queued deploys in favor of the newest commit.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      # vite.config.ts works out the base path (/<repo>/) and the public site URL from the
+      # GitHub environment on its own. For a custom domain, set the repository variables
+      # VITE_BASE=/ and VITE_SITE_URL=https://your.domain (Settings > Secrets and variables > Actions > Variables).
+      - name: Build
+        run: npm run build
+        env:
+          VITE_BASE: ${{ vars.VITE_BASE }}
+          VITE_SITE_URL: ${{ vars.VITE_SITE_URL }}
+          VITE_GOOGLE_SITE_VERIFICATION: ${{ vars.VITE_GOOGLE_SITE_VERIFICATION }}
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload the site
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
