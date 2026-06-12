@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from "react";
 export type Theme = "dark" | "light";
 
 const STORAGE_KEY = "tca-theme";
-const THEME_COLORS: Record<Theme, string> = { dark: "#000000", light: "#f2f2ef" };
+const THEME_COLORS: Record<Theme, string> = { dark: "#000000", light: "#eef1f6" };
 
 // index.html sets data-theme before first paint, so read it back instead of guessing.
 function readInitialTheme(): Theme {

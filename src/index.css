@@ -36,38 +36,38 @@
     "Liberation Mono", monospace;
 }
 
-/* Light theme: paper background, dark ink, and the same amber accent for chrome. */
+/* Light theme: cool paper background, navy body text, blue chrome, softer red for costs. */
 :root[data-theme="light"] {
   color-scheme: light;
 
-  --surface-1: #ffffff;
-  --page-plane: #f2f2ef;
-  --text-primary: #1b1b18;
-  --text-secondary: #8a5a00;
-  --text-muted: #6b6b63;
-  --amber: #8a5a00;
+  --surface-1: #fbfcfe;
+  --page-plane: #eef1f6;
+  --text-primary: #14213d;
+  --text-secondary: #0474ba;
+  --text-muted: #56627a;
+  --amber: #0474ba;
   --on-amber: #ffffff;
-  --gridline: #e2e2dc;
-  --baseline: #b5b5ac;
-  --border: rgba(138, 90, 0, 0.3);
+  --gridline: #dfe4ee;
+  --baseline: #b5bdcc;
+  --border: rgba(4, 116, 186, 0.32);
   --tooltip-bg: #ffffff;
-  --tooltip-glow: rgba(27, 27, 24, 0.15);
+  --tooltip-glow: rgba(20, 33, 61, 0.14);
 
-  --series-blue: #1f6feb;
-  --series-orange: #c2410c;
-  --series-aqua: #0f766e;
-  --series-yellow: #a16207;
-  --series-magenta: #be185d;
-  --series-green: #15803d;
-  --series-violet: #6d28d9;
-  --series-red: #c0392b;
+  --series-blue: #0474ba;
+  --series-orange: #f17720;
+  --series-aqua: #1baf7a;
+  --series-yellow: #eda100;
+  --series-magenta: #e87ba4;
+  --series-green: #008300;
+  --series-violet: #4a3aa7;
+  --series-red: #b94a48;
 
-  --status-good: #15803d;
-  --status-warning: #a16207;
-  --status-serious: #c2410c;
-  --status-critical: #c0392b;
+  --status-good: #0b7d0b;
+  --status-warning: #9a6400;
+  --status-serious: #b23b3b;
+  --status-critical: #b23b3b;
 
-  --diverging-neutral: #e8e8e2;
+  --diverging-neutral: #e6eaf2;
 }
 
 * {
