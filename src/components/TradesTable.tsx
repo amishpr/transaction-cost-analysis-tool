@@ -9,7 +9,7 @@ interface TradesTableProps {
 type SortKey = "date" | "symbol" | "notional" | "arrivalSlippageBps" | "vwapSlippageBps";
 
 function costBadge(bps: number): { label: string; icon: string; className: string } {
-  if (bps <= -3) return { label: "Improved", icon: "↓", className: "badge-good" };
+  if (bps <= -3) return { label: "Improved", icon: "▼", className: "badge-good" };
   if (bps >= 15) return { label: "High", icon: "▲", className: "badge-critical" };
   if (bps >= 6) return { label: "Elevated", icon: "▲", className: "badge-warning" };
   return { label: "Normal", icon: "•", className: "badge-neutral" };
