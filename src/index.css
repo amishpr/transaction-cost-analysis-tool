@@ -36,7 +36,7 @@
     "Liberation Mono", monospace;
 }
 
-/* Light theme: cool paper background, navy body text, blue chrome, softer red for costs. */
+/* Light theme: cool paper background, navy body text, blue chrome, orange for costs. */
 :root[data-theme="light"] {
   color-scheme: light;
 
@@ -60,12 +60,12 @@
   --series-magenta: #e87ba4;
   --series-green: #008300;
   --series-violet: #4a3aa7;
-  --series-red: #b94a48;
+  --series-red: #f17720;
 
   --status-good: #0b7d0b;
   --status-warning: #9a6400;
-  --status-serious: #b23b3b;
-  --status-critical: #b23b3b;
+  --status-serious: #f17720;
+  --status-critical: #f17720;
 
   --diverging-neutral: #e6eaf2;
 }

@@ -52,7 +52,7 @@
 }
 
 .cost-bad {
-  color: var(--series-red);
+  color: var(--status-critical);
 }
 
 .cost-good {
