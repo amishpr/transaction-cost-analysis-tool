@@ -1,4 +1,13 @@
-.theme-toggle {
+.header-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* Shared chrome for the buttons in the top right corner (theme toggle, repo link). */
+.header-button {
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -12,17 +21,18 @@
   font-weight: 600;
   letter-spacing: 0.04em;
   text-transform: uppercase;
+  text-decoration: none;
   cursor: pointer;
   white-space: nowrap;
   transition: background 0.1s ease, color 0.1s ease;
 }
 
-.theme-toggle:hover {
+.header-button:hover {
   background: var(--amber);
   color: var(--on-amber);
 }
 
-.theme-toggle:focus-visible {
+.header-button:focus-visible {
   outline: 2px solid var(--amber);
   outline-offset: 2px;
 }

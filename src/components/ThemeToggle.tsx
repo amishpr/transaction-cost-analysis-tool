@@ -1,5 +1,5 @@
 import type { Theme } from "../lib/useTheme";
-import "./ThemeToggle.css";
+import "./HeaderActions.css";
 
 interface ThemeToggleProps {
   theme: Theme;
@@ -32,7 +32,7 @@ export function ThemeToggle({ theme, onToggle }: ThemeToggleProps) {
   return (
     <button
       type="button"
-      className="theme-toggle"
+      className="header-button"
       onClick={onToggle}
       aria-label={`Switch to ${label.toLowerCase()} theme`}
       title={`Switch to ${label.toLowerCase()} theme`}

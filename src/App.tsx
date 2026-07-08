@@ -8,6 +8,7 @@ import { SlippageHistogram } from "./components/SlippageHistogram";
 import { SlippageTimeline } from "./components/SlippageTimeline";
 import { StatTile } from "./components/StatTile";
 import { SymbolImpactBubbleChart } from "./components/SymbolImpactBubbleChart";
+import { RepoLink } from "./components/RepoLink";
 import { ThemeToggle } from "./components/ThemeToggle";
 import { TradesTable } from "./components/TradesTable";
 import { UploadPanel } from "./components/UploadPanel";
@@ -87,7 +88,10 @@ function App() {
           </h1>
           <p>TRANSACTION COST ANALYSIS — SLIPPAGE VS. ARRIVAL PRICE AND VWAP</p>
         </div>
-        <ThemeToggle theme={theme} onToggle={toggleTheme} />
+        <div className="header-actions">
+          <RepoLink />
+          <ThemeToggle theme={theme} onToggle={toggleTheme} />
+        </div>
       </header>
 
       <AboutPanel />
