@@ -1,6 +1,6 @@
 {
-  "name": "TCA Analyzer",
-  "short_name": "TCA Analyzer",
+  "name": "Transaction Cost Analysis Tool",
+  "short_name": "TCA Tool",
   "description": "Transaction cost analysis for equity trades: slippage against arrival price and VWAP, by symbol, strategy, and venue.",
   "start_url": "./",
   "scope": "./",

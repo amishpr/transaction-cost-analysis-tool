@@ -1,10 +1,10 @@
-# Project Walkthrough: TCA Analyzer
+# Project Walkthrough: Transaction Cost Analysis Tool
 
 This document is meant to help explain the project out loud, for example in an interview. It covers what the app does, why it was built the way it was, the reasoning behind each library choice, the interesting technical problems that came up, and the bugs that got caught along the way.
 
 ## The project in one paragraph
 
-TCA Analyzer is a React dashboard that measures how much it cost to execute a set of trades. A user loads a list of trade fills, either the built in sample data or their own CSV or Excel file, and the app compares each execution price to two benchmark prices to work out how much better or worse the fill was than the market. Those numbers are then rolled up into charts and a table, so it is easy to see which symbols, execution strategies, venues, or sides of the market were costing the most.
+The Transaction Cost Analysis Tool is a React dashboard that measures how much it cost to execute a set of trades. A user loads a list of trade fills, either the built in sample data or their own CSV or Excel file, and the app compares each execution price to two benchmark prices to work out how much better or worse the fill was than the market. Those numbers are then rolled up into charts and a table, so it is easy to see which symbols, execution strategies, venues, or sides of the market were costing the most.
 
 ## Background: what transaction cost analysis is
 

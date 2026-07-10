@@ -1,6 +1,6 @@
-# TCA Analyzer
+# Transaction Cost Analysis Tool
 
-TCA Analyzer is a web dashboard for transaction cost analysis on equity trades. You give it a list of trade fills and it tells you how expensive those fills were compared to two standard benchmarks: the arrival price and the VWAP (volume weighted average price). The app computes the cost per trade, rolls it up by symbol, strategy, and side, and shows the results in a set of charts and a sortable table.
+The Transaction Cost Analysis Tool is a web dashboard for transaction cost analysis on equity trades. You give it a list of trade fills and it tells you how expensive those fills were compared to two standard benchmarks: the arrival price and the VWAP (volume weighted average price). The app computes the cost per trade, rolls it up by symbol, strategy, and side, and shows the results in a set of charts and a sortable table.
 
 It runs entirely in the browser. There is no backend or database. You can either use the built in sample data or upload your own file of trades, as a CSV or an Excel spreadsheet (.xlsx or .xls).
 
@@ -136,7 +136,7 @@ These environment variables are all optional. They can be set as GitHub reposito
 * `VITE_SITE_URL`: the full public URL of the site, used for canonical links, social preview links, the sitemap, and `robots.txt`. Defaults to the GitHub Pages URL, the Netlify site URL, or `http://localhost:5180` for a plain local build, so set this yourself if you deploy a local build by hand.
 * `VITE_GOOGLE_SITE_VERIFICATION`: the token from Google Search Console for the verification meta tag (see below).
 
-To check a GitHub Pages style build locally, run `VITE_BASE=/tca-analyzer/ npm run build` and then `VITE_BASE=/tca-analyzer/ npm run preview`, and open the address it prints.
+To check a GitHub Pages style build locally, run `VITE_BASE=/transaction-cost-analysis-tool/ npm run build` and then `VITE_BASE=/transaction-cost-analysis-tool/ npm run preview`, and open the address it prints.
 
 ## Search engine optimization
 

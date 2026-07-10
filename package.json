@@ -1,5 +1,5 @@
 {
-  "name": "tca-analyzer",
+  "name": "transaction-cost-analysis-tool",
   "private": true,
   "version": "0.0.0",
   "type": "module",

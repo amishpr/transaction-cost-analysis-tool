@@ -9,7 +9,7 @@
       "presentation": {
         "reveal": "always",
         "panel": "dedicated",
-        "group": "tca-analyzer"
+        "group": "transaction-cost-analysis-tool"
       },
       "problemMatcher": {
         "owner": "vite",
@@ -34,7 +34,7 @@
       "presentation": {
         "reveal": "always",
         "panel": "dedicated",
-        "group": "tca-analyzer"
+        "group": "transaction-cost-analysis-tool"
       },
       "problemMatcher": ["$tsc"]
     },
@@ -46,7 +46,7 @@
       "presentation": {
         "reveal": "always",
         "panel": "dedicated",
-        "group": "tca-analyzer"
+        "group": "transaction-cost-analysis-tool"
       },
       "problemMatcher": []
     },
@@ -58,7 +58,7 @@
       "presentation": {
         "reveal": "always",
         "panel": "dedicated",
-        "group": "tca-analyzer"
+        "group": "transaction-cost-analysis-tool"
       },
       "problemMatcher": []
     }

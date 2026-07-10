@@ -59,7 +59,7 @@ function seoPlugin(): Plugin {
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="robots" content="noindex, nofollow" />
-    <title>Page not found | TCA Analyzer</title>
+    <title>Page not found | Transaction Cost Analysis Tool</title>
     <link rel="icon" type="image/svg+xml" href="${base}favicon.svg" />
     <style>
       body { margin: 0; min-height: 100vh; display: grid; place-content: center; gap: 12px; text-align: center;
@@ -72,7 +72,7 @@ function seoPlugin(): Plugin {
   <body>
     <h1>404 PAGE NOT FOUND</h1>
     <p>That address does not exist.</p>
-    <p><a href="${base}">Back to TCA Analyzer</a></p>
+    <p><a href="${base}">Back to Transaction Cost Analysis Tool</a></p>
   </body>
 </html>
 `

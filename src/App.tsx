@@ -81,7 +81,7 @@ function App() {
       <header className="app-header">
         <div>
           <h1>
-            TCA ANALYZER{" "}
+            TRANSACTION COST ANALYSIS TOOL{" "}
             <span className="app-header-go" aria-hidden="true">
               &lt;GO&gt;
             </span>
