@@ -4,6 +4,8 @@ The Transaction Cost Analysis Tool is a web dashboard for transaction cost analy
 
 It runs entirely in the browser. There is no backend or database. You can either use the built in sample data or upload your own file of trades, as a CSV or an Excel spreadsheet (.xlsx or .xls).
 
+![A screenshot of the Transaction Cost Analysis Tool dashboard in the dark terminal theme, showing summary stats, cost charts, portfolio composition charts, and the trade blotter](docs/screenshot.png)
+
 ## What the app shows you
 
 * Summary stats: number of trades, total notional traded, total shares, average slippage against arrival price and VWAP (weighted by trade size), total dollar cost, and the percentage of trades that actually beat their benchmark.
