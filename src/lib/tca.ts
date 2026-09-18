@@ -1,4 +1,5 @@
 import type { GroupStats, RawTrade, TradeMetrics } from "../types";
+import { niceStep } from "./scale";
 
 /**
  * Cost sign convention: positive bps/usd = the fill was worse than the
@@ -114,26 +115,31 @@ export function summarize(trades: TradeMetrics[]): Summary {
   };
 }
 
-export function histogram(values: number[], binCount = 12): { bin: string; from: number; to: number; count: number }[] {
+export interface HistogramBin {
+  from: number;
+  to: number;
+  mid: number;
+  count: number;
+}
+
+/**
+ * Bins on round edges (a nice step, aligned to multiples of that step) so zero is always
+ * an edge and every bin sits wholly on the cost side or the improvement side.
+ */
+export function histogram(values: number[], targetBins = 14): HistogramBin[] {
   if (values.length === 0) return [];
   const min = Math.min(...values);
   const max = Math.max(...values);
-  const span = max - min || 1;
-  const width = span / binCount;
-  const bins = Array.from({ length: binCount }, (_, i) => ({
-    bin: "",
-    from: min + i * width,
-    to: min + (i + 1) * width,
-    count: 0,
-  }));
+  const width = niceStep((max - min) / targetBins);
+  const start = Math.floor(min / width) * width;
+  const binCount = Math.floor((max - start) / width) + 1;
+  const bins = Array.from({ length: binCount }, (_, i) => {
+    const from = start + i * width;
+    return { from, to: from + width, mid: from + width / 2, count: 0 };
+  });
   for (const v of values) {
-    let idx = Math.floor((v - min) / width);
-    if (idx >= binCount) idx = binCount - 1;
-    if (idx < 0) idx = 0;
+    const idx = Math.min(binCount - 1, Math.max(0, Math.floor((v - start) / width)));
     bins[idx].count += 1;
-  }
-  for (const b of bins) {
-    b.bin = `${b.from.toFixed(0)}`;
   }
   return bins;
 }
