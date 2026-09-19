@@ -44,10 +44,22 @@
   gap: 12px;
 }
 
+/* Cards keep their natural height, so a short chart does not stretch into an empty box. */
 .chart-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
   gap: 16px;
+}
+
+.chart-grid-3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+@media (max-width: 1024px) {
+  .chart-grid-3 {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 860px) {

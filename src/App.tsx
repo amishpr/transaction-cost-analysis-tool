@@ -159,7 +159,7 @@ function App() {
           <h2 className="section-title">Portfolio composition</h2>
           <span className="section-subtitle">Share of notional by venue, sector, and market cap</span>
         </div>
-        <div className="chart-grid">
+        <div className="chart-grid chart-grid-3">
           <ShareBreakdownChart
             title="Venue breakdown"
             subtitle="Share of notional by execution venue"
