@@ -9,9 +9,11 @@ import {
   YAxis,
   ZAxis,
 } from "recharts";
+import { tickDecimals, zeroAnchoredTicks } from "../lib/scale";
 import type { TradeMetrics } from "../types";
-import { ChartCard } from "./ChartCard";
-import { ChartTooltip } from "./ChartTooltip";
+import { ChartCard, ChartLegend } from "./ChartCard";
+import { AXIS_LINE, AXIS_TICK, SIDE_LEGEND } from "./chartTheme";
+import { TradeTooltip } from "./ChartTooltip";
 
 interface SlippageTimelineProps {
   trades: TradeMetrics[];
@@ -20,70 +22,60 @@ interface SlippageTimelineProps {
 export function SlippageTimeline({ trades }: SlippageTimelineProps) {
   const buys = trades.filter((t) => t.side === "BUY");
   const sells = trades.filter((t) => t.side === "SELL");
+  const yTicks = zeroAnchoredTicks(trades.map((t) => t.arrivalSlippageBps));
+  const decimals = tickDecimals(yTicks);
 
   return (
     <ChartCard
       title="Slippage over time"
       subtitle="Each point is one trade, sized by notional"
-      legend={
-        <>
-          <span className="legend-item">
-            <span className="legend-swatch" style={{ background: "var(--series-blue)" }} />
-            Buy
-          </span>
-          <span className="legend-item">
-            <span className="legend-swatch" style={{ background: "var(--series-orange)" }} />
-            Sell
-          </span>
-        </>
-      }
+      legend={<ChartLegend items={SIDE_LEGEND} />}
+      wide
     >
-      <ResponsiveContainer width="100%" height={260}>
-        <ScatterChart margin={{ top: 8, right: 16, bottom: 4, left: 4 }}>
+      <ResponsiveContainer width="100%" height={280}>
+        <ScatterChart margin={{ top: 8, right: 16, bottom: 0, left: -8 }}>
           <CartesianGrid stroke="var(--gridline)" />
           <XAxis
             dataKey="date"
             type="category"
             allowDuplicatedCategory={false}
-            tick={{ fill: "var(--text-muted)", fontSize: 11 }}
-            axisLine={{ stroke: "var(--baseline)" }}
+            tick={AXIS_TICK}
+            axisLine={AXIS_LINE}
             tickLine={false}
-            minTickGap={30}
+            minTickGap={36}
           />
           <YAxis
             dataKey="arrivalSlippageBps"
             name="Slippage"
-            tick={{ fill: "var(--text-muted)", fontSize: 11 }}
-            axisLine={{ stroke: "var(--baseline)" }}
+            domain={[yTicks[0], yTicks[yTicks.length - 1]]}
+            ticks={yTicks}
+            tick={AXIS_TICK}
+            axisLine={AXIS_LINE}
             tickLine={false}
-            tickFormatter={(v: number) => v.toFixed(0)}
+            tickFormatter={(v: number) => v.toFixed(decimals)}
           />
-          <ZAxis dataKey="notional" range={[20, 200]} />
-          <ReferenceLine y={0} stroke="var(--baseline)" />
+          <ZAxis dataKey="notional" range={[24, 220]} />
+          <ReferenceLine y={0} stroke="var(--text-muted)" />
           <Tooltip
-            cursor={{ stroke: "var(--baseline)", strokeDasharray: "3 3" }}
-            content={({ active, payload }) => {
-              const row = payload?.[0]?.payload as TradeMetrics | undefined;
-              if (!row) return null;
-              return (
-                <ChartTooltip
-                  active={active}
-                  title={`${row.symbol} · ${row.date}`}
-                  rows={[
-                    { label: "Side", value: row.side },
-                    { label: "Slippage vs arrival", value: `${row.arrivalSlippageBps.toFixed(1)} bps` },
-                    { label: "Notional", value: `$${row.notional.toLocaleString()}` },
-                    { label: "Strategy", value: row.strategy },
-                  ]}
-                />
-              );
-            }}
+            cursor={{ stroke: "var(--baseline)" }}
+            content={({ active, payload }) => (
+              <TradeTooltip active={active} trade={payload?.[0]?.payload as TradeMetrics | undefined} />
+            )}
           />
-          <Scatter data={buys} fill="var(--series-blue)" fillOpacity={0.75} isAnimationActive={false} />
+          <Scatter
+            data={buys}
+            fill="var(--buy)"
+            fillOpacity={0.8}
+            stroke="var(--surface-1)"
+            strokeWidth={1}
+            isAnimationActive={false}
+          />
           <Scatter
             data={sells}
-            fill="var(--series-orange)"
-            fillOpacity={0.75}
+            fill="var(--sell)"
+            fillOpacity={0.8}
+            stroke="var(--surface-1)"
+            strokeWidth={1}
             isAnimationActive={false}
           />
         </ScatterChart>
