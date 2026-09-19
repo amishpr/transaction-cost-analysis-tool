@@ -32,8 +32,8 @@
 
   --diverging-neutral: #262620;
 
-  font-family: ui-monospace, "SF Mono", "Roboto Mono", "IBM Plex Mono", Menlo, Consolas,
-    "Liberation Mono", monospace;
+  font-family: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, Consolas, "Liberation Mono",
+    monospace;
 }
 
 /* Light theme: cool paper background, navy body text, blue chrome, orange for costs. */
