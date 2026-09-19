@@ -6,8 +6,8 @@ import { FilterBar } from "./components/FilterBar";
 import { ShareBreakdownChart } from "./components/ShareBreakdownChart";
 import { SlippageHistogram } from "./components/SlippageHistogram";
 import { SlippageTimeline } from "./components/SlippageTimeline";
+import { SlippageVsSizeChart } from "./components/SlippageVsSizeChart";
 import { StatTile } from "./components/StatTile";
-import { SymbolImpactBubbleChart } from "./components/SymbolImpactBubbleChart";
 import { RepoLink } from "./components/RepoLink";
 import { ThemeToggle } from "./components/ThemeToggle";
 import { TradesTable } from "./components/TradesTable";
@@ -143,12 +143,13 @@ function App() {
       <section className="page-section">
         <div className="section-header">
           <h2 className="section-title">Execution cost</h2>
-          <span className="section-subtitle">Slippage vs. arrival price by symbol, strategy, and over time</span>
+          <span className="section-subtitle">Slippage vs. arrival price by symbol, strategy, size, and over time</span>
         </div>
         <div className="chart-grid">
           <CostByGroupChart title="Cost by symbol" subtitle="Notional-weighted avg vs arrival price" data={bySymbol} />
           <CostByGroupChart title="Cost by strategy" subtitle="Notional-weighted avg vs arrival price" data={byStrategy} />
           <SlippageHistogram values={filtered.map((t) => t.arrivalSlippageBps)} />
+          <SlippageVsSizeChart trades={filtered} />
           <SlippageTimeline trades={filtered} />
         </div>
       </section>
@@ -156,7 +157,7 @@ function App() {
       <section className="page-section">
         <div className="section-header">
           <h2 className="section-title">Portfolio composition</h2>
-          <span className="section-subtitle">Venue routing, sector, market cap, and size vs. slippage</span>
+          <span className="section-subtitle">Share of notional by venue, sector, and market cap</span>
         </div>
         <div className="chart-grid">
           <ShareBreakdownChart
@@ -164,7 +165,6 @@ function App() {
             subtitle="Share of notional by execution venue"
             data={byVenue}
           />
-          <SymbolImpactBubbleChart data={bySymbol} />
           <ShareBreakdownChart
             title="Sector breakdown"
             subtitle="Share of notional by sector"
