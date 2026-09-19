@@ -1,90 +1,223 @@
-/* Default theme: Bloomberg-terminal-style palette. Black field, amber chrome, white data. */
+/*
+ * Default theme: Bloomberg-terminal-style palette. Black field, amber chrome, white data.
+ * Components read role tokens (heading, control, accent, cost, improve...) rather than raw
+ * colors, so the light theme can swap amber text for ink without touching components.
+ */
 :root {
   color-scheme: dark;
 
-  --surface-1: #000000;
   --page-plane: #000000;
+  --surface-1: #000000;
   --text-primary: #e8e8e0;
   --text-secondary: #ff9900;
   --text-muted: #7a7a72;
-  --amber: #ff9900;
-  --on-amber: #000000;
+
+  --heading: #ff9900;
+  --control: #ff9900;
+  --control-border: #ff9900;
+  --field-border: rgba(255, 153, 0, 0.35);
+  --accent: #ff9900;
+  --on-accent: #000000;
+  --accent-text: #ff9900;
+  --focus: #ff9900;
+
   --gridline: #2a2a24;
   --baseline: #4d4d44;
   --border: rgba(255, 153, 0, 0.35);
+  --rule-strong: 1px solid rgba(255, 153, 0, 0.35);
+  --row-hover: rgba(255, 153, 0, 0.06);
   --tooltip-bg: #050502;
+  --tooltip-border: #ff9900;
   --tooltip-glow: rgba(255, 153, 0, 0.2);
+  --overlay: rgba(0, 0, 0, 0.85);
 
-  /* Buy = cyan, Sell = amber; cost polarity = red/cyan (warm/cool poles). */
-  --series-blue: #00e5ff;
-  --series-orange: #ffb000;
-  --series-aqua: #00e5ff;
-  --series-yellow: #ffd400;
-  --series-magenta: #ff5fd8;
-  --series-green: #00ff66;
-  --series-violet: #b98cff;
-  --series-red: #ff3b30;
+  /* Cost polarity = red/cyan (warm/cool poles). Buy = cyan, Sell = amber. */
+  --cost: #ff3b30;
+  --improve: #00e5ff;
+  --cost-text: #ff3b30;
+  --improve-text: #00e5ff;
+  --buy: #00e5ff;
+  --sell: #ffb000;
+  --share: #00e5ff;
 
   --status-good: #00ff66;
   --status-warning: #ffb000;
-  --status-serious: #ff8a3d;
   --status-critical: #ff3b30;
 
-  --diverging-neutral: #262620;
-
-  font-family: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, Consolas, "Liberation Mono",
+  --font-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, Consolas, "Liberation Mono",
     monospace;
+
+  /* Type scale. Kept small on purpose: this is a dense data screen. */
+  --fs-micro: 11px;
+  --fs-small: 12px;
+  --fs-body: 13px;
+  --fs-kpi: 22px;
+  --fs-hero: 30px;
+
+  font-family: var(--font-mono);
 }
 
-/* Light theme: cool paper background, navy body text, blue chrome, orange for costs. */
+/*
+ * Light theme: the terminal printed on paper. Neutral paper, black ink for text and
+ * headings, amber kept as the signature fill (the GO key, hovers, active toggles).
+ * Chart colors were checked for colorblind separation and contrast against #fcfcfa.
+ */
 :root[data-theme="light"] {
   color-scheme: light;
 
-  --surface-1: #fbfcfe;
-  --page-plane: #eef1f6;
-  --text-primary: #14213d;
-  --text-secondary: #0474ba;
-  --text-muted: #56627a;
-  --amber: #0474ba;
-  --on-amber: #ffffff;
-  --gridline: #dfe4ee;
-  --baseline: #b5bdcc;
-  --border: rgba(4, 116, 186, 0.32);
-  --tooltip-bg: #ffffff;
-  --tooltip-glow: rgba(20, 33, 61, 0.14);
+  --page-plane: #f3f3ef;
+  --surface-1: #fcfcfa;
+  --text-primary: #141412;
+  --text-secondary: #4a4943;
+  --text-muted: #6d6c64;
 
-  --series-blue: #0474ba;
-  --series-orange: #f17720;
-  --series-aqua: #1baf7a;
-  --series-yellow: #eda100;
-  --series-magenta: #e87ba4;
-  --series-green: #008300;
-  --series-violet: #4a3aa7;
-  --series-red: #f17720;
+  --heading: #141412;
+  --control: #141412;
+  --control-border: #8a897f;
+  --field-border: #8a897f;
+  --accent: #ff9900;
+  --on-accent: #000000;
+  --accent-text: #a35400;
+  --focus: #141412;
+
+  --gridline: #e6e5df;
+  --baseline: #bdbcb3;
+  --border: rgba(20, 20, 18, 0.14);
+  --rule-strong: 2px solid #141412;
+  --row-hover: rgba(255, 153, 0, 0.12);
+  --tooltip-bg: #fcfcfa;
+  --tooltip-border: #141412;
+  --tooltip-glow: rgba(20, 20, 18, 0.12);
+  --overlay: rgba(243, 243, 239, 0.9);
+
+  --cost: #d03b3b;
+  --improve: #2a78d6;
+  --cost-text: #b42318;
+  --improve-text: #1d5fae;
+  --buy: #2a78d6;
+  --sell: #d97a00;
+  --share: #4a4943;
 
   --status-good: #0b7d0b;
-  --status-warning: #9a6400;
-  --status-serious: #f17720;
-  --status-critical: #f17720;
-
-  --diverging-neutral: #e6eaf2;
+  --status-warning: #8a5a00;
+  --status-critical: #b42318;
 }
 
 * {
   box-sizing: border-box;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   margin: 0;
   background: var(--page-plane);
   color: var(--text-primary);
-  font-variant-numeric: proportional-nums;
+  font-size: var(--fs-body);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
 }
 
 #root {
-  min-height: 100vh;
+  min-height: 100dvh;
 }
 
 .tabular {
   font-variant-numeric: tabular-nums;
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+/* Shared button. Outlined in the control color, fills with amber on hover like a terminal key. */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 7px 12px;
+  border: 1px solid var(--control-border);
+  border-radius: 0;
+  background: var(--surface-1);
+  color: var(--control);
+  font-family: inherit;
+  font-size: var(--fs-small);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 0.12s ease, color 0.12s ease, border-color 0.12s ease;
+}
+
+.btn:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--on-accent);
+}
+
+.btn:active {
+  transform: translateY(1px);
+}
+
+.btn:disabled {
+  cursor: progress;
+  opacity: 0.6;
+}
+
+.btn:disabled:hover {
+  background: var(--surface-1);
+  border-color: var(--control-border);
+  color: var(--control);
+}
+
+/* Text-only button for secondary actions (clear filters, back to sample data). */
+.btn-link {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--accent-text);
+  font-family: inherit;
+  font-size: var(--fs-small);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.btn-link:hover {
+  text-decoration-thickness: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+  }
+}
+
+/* Old token names, mapped onto the role tokens while the components move over. */
+:root {
+  --amber: var(--heading);
+  --on-amber: var(--on-accent);
+  --series-blue: var(--improve);
+  --series-orange: var(--sell);
+  --series-red: var(--cost);
+}
+
+:root[data-theme="light"] {
+  --on-amber: var(--surface-1);
 }
