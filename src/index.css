@@ -208,16 +208,3 @@ body {
     transition: none !important;
   }
 }
-
-/* Old token names, mapped onto the role tokens while the components move over. */
-:root {
-  --amber: var(--heading);
-  --on-amber: var(--on-accent);
-  --series-blue: var(--improve);
-  --series-orange: var(--sell);
-  --series-red: var(--cost);
-}
-
-:root[data-theme="light"] {
-  --on-amber: var(--surface-1);
-}
