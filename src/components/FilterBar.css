@@ -1,6 +1,6 @@
 .filter-bar {
   display: flex;
-  gap: 16px;
+  gap: 12px;
   flex-wrap: wrap;
   align-items: flex-end;
 }
@@ -9,24 +9,36 @@
   display: flex;
   flex-direction: column;
   gap: 4px;
-  font-size: 11px;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  flex: 1 1 140px;
+  max-width: 220px;
+  min-width: 0;
 }
 
+/* Native select with the arrow redrawn in currentColor, so it follows the theme. */
 .filter-field select {
-  background: var(--surface-1);
-  color: var(--amber);
-  border: 1px solid var(--border);
+  appearance: none;
+  width: 100%;
+  background-color: var(--surface-1);
+  background-image: linear-gradient(45deg, transparent 50%, currentColor 50%),
+    linear-gradient(135deg, currentColor 50%, transparent 50%);
+  background-position: calc(100% - 15px) 50%, calc(100% - 10px) 50%;
+  background-size: 5px 5px;
+  background-repeat: no-repeat;
+  color: var(--control);
+  border: 1px solid var(--field-border);
   border-radius: 0;
-  padding: 6px 10px;
-  font-size: 13px;
+  padding: 6px 28px 6px 10px;
+  font-size: var(--fs-small);
   font-family: inherit;
-  min-width: 140px;
+  cursor: pointer;
+  text-overflow: ellipsis;
 }
 
-.filter-field select:focus {
-  outline: 1px solid var(--amber);
-  outline-offset: 1px;
+.filter-field select:hover {
+  border-color: var(--accent);
+}
+
+.filter-clear {
+  align-self: center;
+  margin-top: 18px;
 }

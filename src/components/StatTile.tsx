@@ -5,14 +5,20 @@ interface StatTileProps {
   value: string;
   sublabel?: string;
   tone?: "neutral" | "good" | "bad";
+  /** The headline metric: spans two columns and prints larger. */
+  hero?: boolean;
+  /** Full-precision value for the hover title when `value` is abbreviated. */
+  title?: string;
 }
 
-export function StatTile({ label, value, sublabel, tone = "neutral" }: StatTileProps) {
+export function StatTile({ label, value, sublabel, tone = "neutral", hero = false, title }: StatTileProps) {
   return (
-    <div className="stat-tile">
-      <div className="stat-tile-label">{label}</div>
-      <div className={`stat-tile-value tabular tone-${tone}`}>{value}</div>
-      {sublabel && <div className="stat-tile-sublabel">{sublabel}</div>}
+    <div className={`stat-tile${hero ? " stat-tile-hero" : ""}`}>
+      <dt className="stat-tile-label">{label}</dt>
+      <dd className={`stat-tile-value tabular tone-${tone}`} title={title}>
+        {value}
+      </dd>
+      {sublabel && <dd className="stat-tile-sublabel">{sublabel}</dd>}
     </div>
   );
 }
