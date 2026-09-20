@@ -6,33 +6,41 @@
   gap: 8px;
 }
 
-/* Shared chrome for the buttons in the top right corner (theme toggle, repo link). */
-.header-button {
+.theme-toggle {
   display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 7px 12px;
-  border: 1px solid var(--amber);
+  border: 1px solid var(--control-border);
+}
+
+.theme-option {
+  padding: 7px 10px;
+  border: 0;
   border-radius: 0;
   background: var(--surface-1);
-  color: var(--amber);
+  color: var(--control);
   font-family: inherit;
-  font-size: 12px;
+  font-size: var(--fs-small);
   font-weight: 600;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  text-decoration: none;
   cursor: pointer;
-  white-space: nowrap;
-  transition: background 0.1s ease, color 0.1s ease;
+  transition: background-color 0.12s ease, color 0.12s ease;
 }
 
-.header-button:hover {
-  background: var(--amber);
-  color: var(--on-amber);
+.theme-option + .theme-option {
+  border-left: 1px solid var(--control-border);
 }
 
-.header-button:focus-visible {
-  outline: 2px solid var(--amber);
-  outline-offset: 2px;
+.theme-option:hover {
+  background: var(--row-hover);
+}
+
+.theme-option[aria-pressed="true"] {
+  background: var(--accent);
+  color: var(--on-accent);
+  cursor: default;
+}
+
+.theme-option:focus-visible {
+  outline-offset: -4px;
+  outline-color: currentColor;
 }

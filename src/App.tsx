@@ -25,7 +25,7 @@ const fmtUsd = (v: number) =>
   v.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
 
 function App() {
-  const { theme, toggleTheme } = useTheme();
+  const { theme, setTheme } = useTheme();
   const [rawTrades, setRawTrades] = useState<RawTrade[]>(() => generateSampleTrades());
   const [error, setError] = useState<string | null>(null);
   const [filters, setFilters] = useState<Filters>({ symbol: "ALL", side: "ALL", strategy: "ALL" });
@@ -90,7 +90,7 @@ function App() {
         </div>
         <div className="header-actions">
           <RepoLink />
-          <ThemeToggle theme={theme} onToggle={toggleTheme} />
+          <ThemeToggle theme={theme} onChange={setTheme} />
         </div>
       </header>
 
