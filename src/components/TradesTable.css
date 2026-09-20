@@ -3,37 +3,62 @@
   border: 1px solid var(--border);
   border-radius: 0;
   overflow: auto;
-  max-height: 480px;
+  max-height: 520px;
 }
 
 .trades-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 12px;
+  font-size: var(--fs-small);
 }
 
 .trades-table th {
   position: sticky;
   top: 0;
+  z-index: 1;
   background: var(--surface-1);
   text-align: left;
-  padding: 9px 12px;
-  color: var(--amber);
+  padding: 9px 9px;
+  color: var(--heading);
+  font-size: var(--fs-micro);
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.03em;
-  border-bottom: 1px solid var(--border);
-  cursor: pointer;
+  letter-spacing: 0.05em;
   white-space: nowrap;
-  user-select: none;
+  box-shadow: inset 0 -1px 0 var(--border);
 }
 
-.trades-table th:hover {
-  color: var(--text-primary);
+.th-sort {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  cursor: pointer;
+}
+
+.th-sort:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.th-sort-arrow {
+  color: var(--text-muted);
+  font-size: 10px;
+}
+
+.th-sort-active .th-sort-arrow {
+  color: var(--accent-text);
+  font-size: var(--fs-micro);
 }
 
 .trades-table td {
-  padding: 7px 12px;
+  padding: 6px 9px;
   border-bottom: 1px solid var(--gridline);
   color: var(--text-primary);
   white-space: nowrap;
@@ -44,7 +69,11 @@
 }
 
 .trades-table tbody tr:hover {
-  background: color-mix(in srgb, var(--amber) 6%, transparent);
+  background: var(--row-hover);
+}
+
+.cell-symbol {
+  font-weight: 600;
 }
 
 .num {
@@ -52,40 +81,48 @@
 }
 
 .cost-bad {
-  color: var(--status-critical);
+  color: var(--cost-text);
 }
 
 .cost-good {
-  color: var(--series-blue);
+  color: var(--improve-text);
 }
 
 .side-tag {
-  font-size: 11px;
-  font-weight: 700;
-  padding: 1px 6px;
+  font-size: var(--fs-micro);
+  font-weight: 600;
+  padding: 0 6px;
   border-radius: 0;
   border: 1px solid currentColor;
 }
 
 .side-buy {
-  color: var(--series-blue);
+  color: var(--buy);
 }
 
 .side-sell {
-  color: var(--series-orange);
+  color: var(--sell);
+}
+
+:root[data-theme="light"] .side-buy {
+  color: var(--improve-text);
+}
+
+:root[data-theme="light"] .side-sell {
+  color: var(--accent-text);
 }
 
 .badge {
   font-size: 10.5px;
-  font-weight: 700;
-  padding: 1px 7px;
+  font-weight: 600;
+  padding: 0 6px;
   border-radius: 0;
   border: 1px solid currentColor;
   display: inline-flex;
   align-items: center;
   gap: 4px;
   text-transform: uppercase;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.04em;
 }
 
 .badge-good {
@@ -100,13 +137,9 @@
   color: var(--status-critical);
 }
 
-.badge-neutral {
+.status-normal {
   color: var(--text-muted);
-}
-
-.trades-table-empty {
-  padding: 32px;
-  text-align: center;
-  color: var(--text-muted);
-  font-size: 13px;
+  font-size: var(--fs-micro);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
