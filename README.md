@@ -11,12 +11,13 @@ It runs entirely in the browser. There is no backend or database. You can either
 * Summary stats: number of trades, total notional traded, total shares, average slippage against arrival price and VWAP (weighted by trade size), total dollar cost, and the percentage of trades that actually beat their benchmark.
 * A bar chart of average cost by symbol.
 * A bar chart of average cost by execution strategy (VWAP, TWAP, POV, Dark Aggregator, Implementation Shortfall).
-* A histogram showing the distribution of slippage across all trades.
+* A histogram showing the distribution of slippage across all trades, with cost buckets and price improvement buckets in different colors.
+* A scatter chart of slippage against order size, one point per trade, to see whether bigger orders are costing more.
 * A scatter chart plotting slippage over time, colored by buy or sell and sized by trade notional.
-* A portfolio composition section: share of notional by execution venue, a bubble chart of average slippage versus total shares traded per symbol (to see whether bigger orders are costing more), and share of notional by sector and by market cap tier.
-* A trade blotter table listing every trade with its computed cost in basis points and dollars, plus a status tag (Improved, Normal, Elevated, High).
+* A portfolio composition section: ranked lists of the share of notional by execution venue, by sector, and by market cap tier.
+* A trade blotter table listing every trade with its computed cost in basis points and dollars, plus a status tag on unusual fills (Improved, Elevated, High). Columns sort by mouse or keyboard.
 
-You can filter everything by symbol, side, and strategy using the controls at the top, and export the currently filtered trades back out as a CSV. A button in the top right corner switches between the default dark terminal theme and a light theme, and the choice is remembered in the browser.
+Everything can be filtered by symbol, side, and strategy from the control bar at the top, and the Export CSV button above the trade blotter saves the currently filtered trades as a CSV. A Dark / Light switch in the top right corner changes the theme, and the choice is remembered in the browser.
 
 ## Getting started
 
@@ -63,7 +64,7 @@ id, date, symbol, side, quantity, arrivalPrice, execPrice, vwapPrice, venue, str
 * `venue`: where the trade was executed, for example `NYSE` or `UBS`.
 * `strategy`: the execution algorithm used, for example `VWAP`, `TWAP`, `POV`, `Dark Aggregator`, or `Implementation Shortfall`.
 
-You can drag a file onto the drop zone or click it to browse for one. The app looks at the file extension to decide whether to parse it as CSV or Excel, so keep the real extension on the file. If a required column is missing or a numeric column cannot be parsed, the app shows an error message and does not change the loaded data.
+A file can be dropped anywhere on the page or picked with the Upload file button. The control bar shows the name of the loaded file and its trade count. The app looks at the file extension to decide whether to parse it as CSV or Excel, so keep the real extension on the file. If a required column is missing or a numeric column cannot be parsed, the app shows an error message and does not change the loaded data.
 
 Column order does not matter for either file type, since columns are matched by their header name. For a CSV file specifically, values cannot contain a literal comma, since the parser does not support quoted fields.
 
@@ -76,6 +77,8 @@ src/
   types.ts              Type definitions for trades, computed metrics, and filters
   lib/
     tca.ts               The cost calculations: per trade metrics, grouping, summary stats, histogram binning
+    format.ts             Number formatting shared by the stats, charts, and table
+    scale.ts              Round axis ticks and category axis sizing for the charts
     sampleData.ts         Generates the built in sample trades with a seeded random number generator
     tradeRows.ts           Shared row validation used by both the CSV and Excel importers
     csv.ts                  Parses uploaded CSV text and builds the CSV export
@@ -84,21 +87,23 @@ src/
     refData.ts                  Hardcoded symbol to sector / market cap tier lookup
     useTheme.ts                  Hook that stores and applies the light or dark theme
   components/
-    AboutPanel.tsx        The explanation panel at the top of the page
-    UploadPanel.tsx        The drag and drop upload area and sample data / export buttons
+    AboutPanel.tsx        The explanation and file format notes at the bottom of the page
+    UploadPanel.tsx        The data source panel: loaded file, upload button, and a way back to the sample
+    FileDropOverlay.tsx    Accepts a file dropped anywhere on the page
     FilterBar.tsx           Symbol, side, and strategy filters
-    StatTile.tsx             The summary stat cards
-    ChartCard.tsx             Shared card wrapper used around each chart
+    StatTile.tsx             The summary stats strip
+    ChartCard.tsx             Shared card wrapper, legend, and axis label used around each chart
+    chartTheme.ts             Shared legend entries and axis styling for the charts
     ChartTooltip.tsx           Shared tooltip used by the charts
     CostByGroupChart.tsx       Bar chart of cost by symbol or by strategy
-    ShareBreakdownChart.tsx    Bar chart of % of notional by venue, sector, or cap tier
-    SymbolImpactBubbleChart.tsx  Bubble chart of average slippage vs. total shares per symbol
+    ShareBreakdownChart.tsx    Ranked list of % of notional by venue, sector, or cap tier
+    SlippageVsSizeChart.tsx    Scatter chart of slippage vs. order size, one point per trade
     SlippageHistogram.tsx      Distribution of slippage across trades
     SlippageTimeline.tsx       Scatter chart of slippage over time
     TradesTable.tsx             The sortable trade blotter
-    ThemeToggle.tsx             The light / dark button in the header
+    ThemeToggle.tsx             The Dark / Light switch in the header
   App.tsx                Top level layout and state (loaded trades, active filters)
-  index.css              Color tokens for both themes, fonts, and other global styles
+  index.css              Color tokens for both themes, the type scale, and shared button styles
 public/                  Favicon, app icons, social preview image, and web manifest
 index.html               Page metadata for search engines and social sharing
 vite.config.ts           Build settings, plus a plugin that writes robots.txt, sitemap.xml, and 404.html
@@ -181,6 +186,8 @@ Sector and market cap tier are not something you would normally get from a trade
 
 ## Notes on the visual design
 
-The default interface is styled to look like a classic Bloomberg terminal: a black background, an amber and white color scheme, a monospaced font, and sharp cornered panels. This was a deliberate stylistic choice rather than the default look, and it trades off some of the color contrast guidance you would normally follow for a general purpose dashboard in exchange for that specific aesthetic.
+The default interface is styled to look like a classic Bloomberg terminal: a black background, an amber and white color scheme, a monospaced font (IBM Plex Mono, bundled with the app so it looks the same on every system), and sharp cornered panels. This was a deliberate stylistic choice rather than the default look, and it trades off some of the color contrast guidance you would normally follow for a general purpose dashboard in exchange for that specific aesthetic.
 
-For people who prefer or need higher contrast, a toggle in the top right corner switches to a light theme with the same layout, using a cool paper background, navy body text, blue accents, and orange for costs, which is easier on the eyes than a pure red. Both themes are defined as sets of CSS variables in `src/index.css`, and a small script in `index.html` applies the saved choice before the first paint so the page does not flash the wrong theme on load.
+For people who prefer or need higher contrast, the switch in the top right corner changes to a light theme with the same layout. It reads like a printout of the terminal: a neutral paper background, black ink for text and headings, and amber kept for the GO key, button hovers, and the active theme button. Costs are red and price improvement is blue, a pair picked to stay distinct for colorblind readers, and every text color passes WCAG AA contrast against the panels. Both themes are defined as sets of CSS variables in `src/index.css`, and a small script in `index.html` applies the saved choice before the first paint so the page does not flash the wrong theme on load.
+
+![The same dashboard in the light theme, with black text on a paper background, red bars for cost, and amber kept for the GO key and the active theme button](docs/screenshot-light.png)
