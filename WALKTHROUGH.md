@@ -26,11 +26,11 @@ Below that is an upload area. A user can drag a CSV or Excel file of trades onto
 
 Under the upload area are three dropdown filters for symbol, side, and strategy. Changing any of them updates every chart and the table at the same time, because they all read from the same filtered data.
 
-Next is a row of summary tiles: number of trades, total dollar notional, total shares, average slippage against arrival price, average slippage against VWAP, total dollar cost, and the percentage of trades that beat their benchmark.
+Next is a strip of summary figures, led by average slippage against arrival price: number of trades, total dollar notional, total shares, average slippage against arrival price, average slippage against VWAP, total dollar cost, and the percentage of trades that beat their benchmark.
 
-Below the tiles are four charts. Two are bar charts of average cost, one broken down by symbol and one by execution strategy. One is a histogram showing how slippage is distributed across all trades. One is a scatter chart of slippage over time, colored by buy or sell and sized by trade notional.
+Below the summary are five charts. Two are bar charts of average cost, one broken down by symbol and one by execution strategy. One is a histogram showing how slippage is distributed across all trades, with cost and price improvement in different colors. One plots each trade's slippage against its order size, which shows whether bigger orders tend to cost more. The last is a full width scatter chart of slippage over time, colored by buy or sell and sized by trade notional.
 
-After that comes a portfolio composition section with four more charts: a bar chart of the share of notional routed through each execution venue, a bubble chart of average slippage per symbol against total shares traded in that symbol (which shows whether bigger orders tend to cost more), and two bar charts of the share of notional by market sector and by market cap tier.
+After that comes a portfolio composition section with three ranked lists: the share of notional routed through each execution venue, by market sector, and by market cap tier. Each row prints its percentage and dollar amount, so nothing depends on hovering.
 
 At the bottom is the trade blotter, a sortable table listing every individual trade with its prices, quantity, computed slippage in basis points and dollars, and a status tag that flags whether the fill was notably good or bad.
 
@@ -60,7 +60,7 @@ The third layer is the presentation code in `src/components`. Each visual piece 
 
 **Vite.** Vite was chosen as the build tool and dev server because it starts almost instantly and shows code changes in the browser in well under a second. A lot of the work on this app was visual and needed constant checking in the browser, so a fast feedback loop mattered more than anything else a build tool offers.
 
-**Recharts.** The app needs several chart types (bar charts, a histogram, scatter and bubble charts), all with a consistent look and hover tooltips. Recharts builds charts by composing React components such as `BarChart`, `Bar`, and `Tooltip`, instead of writing raw SVG or working with a lower level library like D3. That kept the charting code declarative and consistent with the rest of the codebase, and made it easy to share one tooltip component and one card component across every chart.
+**Recharts.** The app needs several chart types (bar charts, a histogram, and scatter charts), all with a consistent look and hover tooltips. Recharts builds charts by composing React components such as `BarChart`, `Bar`, and `Tooltip`, instead of writing raw SVG or working with a lower level library like D3. That kept the charting code declarative and consistent with the rest of the codebase, and made it easy to share one tooltip component and one card component across every chart.
 
 **No backend.** All of the calculation happens in the browser in plain JavaScript functions. A server was not needed because the app does not have to persist data between sessions or share it between users. CSV import and export use the browser's built in File and Blob APIs, and Excel import uses a small dedicated library, so reading and downloading files never leaves the client.
 
@@ -124,7 +124,7 @@ Other search work was ordinary but worth doing: a proper title and description, 
 * Add a fuller implementation shortfall calculation that also accounts for any part of an order that never got filled, not just the filled portion.
 * Let a user choose their own benchmark instead of only arrival price and VWAP, for example a closing price benchmark.
 * Replace the hardcoded sector and market cap table with a real reference data source, so any uploaded symbol resolves correctly instead of falling back to "Unclassified."
-* Normalize the order size bubble chart by average daily volume instead of raw share count, so a large order in a thinly traded name and a large order in a heavily traded name are not treated as equally big.
+* Normalize the order size chart by average daily volume instead of raw share count, so a large order in a thinly traded name and a large order in a heavily traded name are not treated as equally big.
 * Persist uploaded data, for example in the browser's local storage, so a refresh does not lose it.
 * Pre-render the page at build time, or add a small amount of static content, so search engines see more than a single client rendered screen.
 * Split the charting library into its own lazily loaded chunk to shrink the first page load further.
@@ -133,4 +133,4 @@ Other search work was ordinary but worth doing: a proper title and description, 
 
 ## A short demo flow
 
-Start with the sample data and the summary tiles, since they give the overall picture. Then change a filter, for example switching side to Sell only, to show every chart and the table updating together. Point out the colors: red for a fill that cost money and cyan for a fill that beat its benchmark, used the same way throughout the app. Scroll to the portfolio composition section and point out the order size bubble chart, which tells a clear story on its own, with bigger bubbles generally sitting further out on the cost axis. Finish by sorting the trade blotter by the cost column to show the best and worst individual fills, and mention that the filtered table can be exported as a CSV, and that a CSV or Excel file can be uploaded in place of the sample data.
+Start with the sample data and the summary tiles, since they give the overall picture. Then change a filter, for example switching side to Sell only, to show every chart and the table updating together. Point out the colors: red for a fill that cost money and cyan for a fill that beat its benchmark, used the same way throughout the app. Point out the slippage vs. order size chart, which tells a clear story on its own, with the bigger orders generally sitting higher on the cost axis. Finish by sorting the trade blotter by the cost column to show the best and worst individual fills, and mention that the filtered table can be exported as a CSV, and that a CSV or Excel file can be uploaded in place of the sample data.
