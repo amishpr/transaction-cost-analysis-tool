@@ -102,3 +102,13 @@ Chart marks were checked against the light panel with a colorblind simulation. I
 * SEO tags, structured data, the 404 page, and the deploy setup.
 * The CSV and Excel parsing, the cost math, and the sample data generator.
 * The section order for the dashboard data: KPIs, execution cost, composition, blotter.
+
+## Status
+
+Every step in the plan is done on the `ui-redesign` branch.
+
+* `npm run lint` and `npm run build` pass. The main bundle is 2 KB larger gzipped than on `main`. The existing warning about a chunk over 500 KB comes from Recharts and React and was already there before this work.
+* Playwright 1.48 screenshots of both themes at 1440px and 390px show no horizontal overflow and no console errors.
+* An interaction script checked the theme switch, keyboard sorting, dropping a file on the page, the empty filter state, the error for a file with missing columns, and going back to the sample data.
+* The trade blotter fits without scrolling at 1280px and wider, and scrolls sideways inside its panel on smaller screens.
+* The README screenshot was retaken, a light theme screenshot was added next to it, and the social preview image was redrawn with the current name and a chart from the new layout. The old preview still said "TCA ANALYZER" from before the rename.
