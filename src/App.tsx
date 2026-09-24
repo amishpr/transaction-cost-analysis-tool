@@ -111,15 +111,16 @@ function App() {
           </p>
         </div>
         <nav className="header-actions" aria-label="Page">
-          <a className="btn" href="#about">
-            About
-          </a>
           <RepoLink />
           <ThemeToggle theme={theme} onChange={setTheme} />
         </nav>
       </header>
 
       <main className="dashboard">
+        <section className="page-section" id="about">
+          <AboutPanel />
+        </section>
+
         <section className="toolbar" aria-label="Data and filters">
           <UploadPanel
             source={source}
@@ -282,10 +283,6 @@ function App() {
             </section>
           </>
         )}
-
-        <section className="page-section" id="about">
-          <AboutPanel />
-        </section>
       </main>
 
       <footer className="footer">

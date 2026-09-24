@@ -112,3 +112,4 @@ Every step in the plan is done on the `ui-redesign` branch.
 * An interaction script checked the theme switch, keyboard sorting, dropping a file on the page, the empty filter state, the error for a file with missing columns, and going back to the sample data.
 * The trade blotter fits without scrolling at 1280px and wider, and scrolls sideways inside its panel on smaller screens.
 * The README screenshot was retaken, a light theme screenshot was added next to it, and the social preview image was redrawn with the current name and a chart from the new layout. The old preview still said "TCA ANALYZER" from before the rename.
+* The About section was later moved back to the top of the page, above the control bar, because the explanations read better before the data. The header link to it was removed since the section now starts right below the header. The column list from step 7 stays, and both README screenshots were retaken.

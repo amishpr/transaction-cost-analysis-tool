@@ -87,7 +87,7 @@ src/
     refData.ts                  Hardcoded symbol to sector / market cap tier lookup
     useTheme.ts                  Hook that stores and applies the light or dark theme
   components/
-    AboutPanel.tsx        The explanation and file format notes at the bottom of the page
+    AboutPanel.tsx        The explanation and file format notes at the top of the page
     UploadPanel.tsx        The data source panel: loaded file, upload button, and a way back to the sample
     FileDropOverlay.tsx    Accepts a file dropped anywhere on the page
     FilterBar.tsx           Symbol, side, and strategy filters
