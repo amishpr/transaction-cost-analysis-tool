@@ -1,23 +1,25 @@
 .chart-tooltip {
   background: var(--tooltip-bg);
-  border: 1px solid var(--amber);
+  border: 1px solid var(--tooltip-border);
   border-radius: 0;
   padding: 8px 10px;
-  box-shadow: 0 0 12px var(--tooltip-glow);
-  font-size: 12px;
-  min-width: 140px;
+  box-shadow: 0 4px 14px var(--tooltip-glow);
+  font-size: var(--fs-small);
+  min-width: 160px;
 }
 
 .chart-tooltip-title {
   color: var(--text-primary);
   font-weight: 600;
   margin-bottom: 4px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--gridline);
 }
 
 .chart-tooltip-row {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 12px;
   color: var(--text-secondary);
   padding: 2px 0;
 }

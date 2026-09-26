@@ -1,7 +1,7 @@
-import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { fmtUsd, fmtUsdCompact } from "../lib/format";
 import type { GroupStats } from "../types";
 import { ChartCard } from "./ChartCard";
-import { ChartTooltip } from "./ChartTooltip";
+import "./ShareBreakdownChart.css";
 
 interface ShareBreakdownChartProps {
   title: string;
@@ -9,64 +9,35 @@ interface ShareBreakdownChartProps {
   data: GroupStats[];
 }
 
-const fmtUsd = (v: number) =>
-  v.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
-
+/**
+ * Ranked share of notional as a plain HTML bar list. Every value is printed, so nothing
+ * hides behind a hover, and long names get a full row instead of wrapping under an axis.
+ */
 export function ShareBreakdownChart({ title, subtitle, data }: ShareBreakdownChartProps) {
   const totalNotional = data.reduce((s, d) => s + d.notional, 0);
   const rows = data
     .map((d) => ({ ...d, pct: totalNotional === 0 ? 0 : (100 * d.notional) / totalNotional }))
     .sort((a, b) => b.pct - a.pct);
-  const rowHeight = 30;
+  const maxPct = Math.max(1e-9, ...rows.map((r) => r.pct));
 
   return (
     <ChartCard title={title} subtitle={subtitle}>
-      <ResponsiveContainer width="100%" height={Math.max(140, rows.length * rowHeight)}>
-        <BarChart data={rows} layout="vertical" margin={{ top: 4, right: 28, bottom: 4, left: 4 }}>
-          <CartesianGrid horizontal={false} stroke="var(--gridline)" />
-          <XAxis
-            type="number"
-            domain={[0, "dataMax"]}
-            tick={{ fill: "var(--text-muted)", fontSize: 11 }}
-            axisLine={{ stroke: "var(--baseline)" }}
-            tickLine={false}
-            tickFormatter={(v: number) => `${v.toFixed(0)}%`}
-          />
-          <YAxis
-            type="category"
-            dataKey="key"
-            width={140}
-            tick={{ fill: "var(--text-secondary)", fontSize: 12 }}
-            axisLine={{ stroke: "var(--baseline)" }}
-            tickLine={false}
-          />
-          <Tooltip
-            cursor={{ fill: "var(--gridline)", opacity: 0.5 }}
-            content={({ active, payload }) => {
-              const row = payload?.[0]?.payload as (GroupStats & { pct: number }) | undefined;
-              if (!row) return null;
-              return (
-                <ChartTooltip
-                  active={active}
-                  title={row.key}
-                  rows={[
-                    { label: "Share of notional", value: `${row.pct.toFixed(1)}%` },
-                    { label: "Notional", value: fmtUsd(row.notional) },
-                    { label: "Trades", value: String(row.count) },
-                  ]}
-                />
-              );
-            }}
-          />
-          <Bar
-            dataKey="pct"
-            fill="var(--series-blue)"
-            radius={[0, 4, 4, 0]}
-            maxBarSize={18}
-            isAnimationActive={false}
-          />
-        </BarChart>
-      </ResponsiveContainer>
+      <ol className="share-list">
+        {rows.map((r) => (
+          <li
+            className="share-row"
+            key={r.key}
+            title={`${r.key}: ${r.pct.toFixed(1)}% of notional, ${fmtUsd(r.notional)}, ${r.count} trades`}
+          >
+            <span className="share-label">{r.key}</span>
+            <span className="share-track" aria-hidden="true">
+              <span className="share-bar" style={{ width: `${(100 * r.pct) / maxPct}%` }} />
+            </span>
+            <span className="share-pct tabular">{r.pct.toFixed(1)}%</span>
+            <span className="share-notional tabular">{fmtUsdCompact(r.notional)}</span>
+          </li>
+        ))}
+      </ol>
     </ChartCard>
   );
 }

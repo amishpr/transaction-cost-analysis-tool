@@ -4,15 +4,18 @@ import "./FilterBar.css";
 interface FilterBarProps {
   filters: Filters;
   onChange: (filters: Filters) => void;
+  onClear: () => void;
   symbols: string[];
   strategies: string[];
 }
 
-export function FilterBar({ filters, onChange, symbols, strategies }: FilterBarProps) {
+export function FilterBar({ filters, onChange, onClear, symbols, strategies }: FilterBarProps) {
+  const active = filters.symbol !== "ALL" || filters.side !== "ALL" || filters.strategy !== "ALL";
+
   return (
-    <div className="filter-bar">
+    <div className="filter-bar" role="group" aria-label="Filters">
       <label className="filter-field">
-        <span>Symbol</span>
+        <span className="field-label">Symbol</span>
         <select
           value={filters.symbol}
           onChange={(e) => onChange({ ...filters, symbol: e.target.value })}
@@ -27,7 +30,7 @@ export function FilterBar({ filters, onChange, symbols, strategies }: FilterBarP
       </label>
 
       <label className="filter-field">
-        <span>Side</span>
+        <span className="field-label">Side</span>
         <select
           value={filters.side}
           onChange={(e) => onChange({ ...filters, side: e.target.value as Filters["side"] })}
@@ -39,7 +42,7 @@ export function FilterBar({ filters, onChange, symbols, strategies }: FilterBarP
       </label>
 
       <label className="filter-field">
-        <span>Strategy</span>
+        <span className="field-label">Strategy</span>
         <select
           value={filters.strategy}
           onChange={(e) => onChange({ ...filters, strategy: e.target.value })}
@@ -52,6 +55,12 @@ export function FilterBar({ filters, onChange, symbols, strategies }: FilterBarP
           ))}
         </select>
       </label>
+
+      {active && (
+        <button type="button" className="btn-link filter-clear" onClick={onClear}>
+          Clear
+        </button>
+      )}
     </div>
   );
 }

@@ -1,9 +1,9 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 export type Theme = "dark" | "light";
 
 const STORAGE_KEY = "tca-theme";
-const THEME_COLORS: Record<Theme, string> = { dark: "#000000", light: "#eef1f6" };
+const THEME_COLORS: Record<Theme, string> = { dark: "#000000", light: "#f3f3ef" };
 
 // index.html sets data-theme before first paint, so read it back instead of guessing.
 function readInitialTheme(): Theme {
@@ -25,9 +25,5 @@ export function useTheme() {
     }
   }, [theme]);
 
-  const toggleTheme = useCallback(() => {
-    setTheme((current) => (current === "dark" ? "light" : "dark"));
-  }, []);
-
-  return { theme, toggleTheme };
+  return { theme, setTheme };
 }

@@ -1,21 +1,27 @@
 .about-panel {
   display: grid;
-  grid-template-columns: 1.3fr 1fr;
-  gap: 24px;
-  padding-bottom: 6px;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+  gap: 28px;
+  padding: 4px 0 6px;
 }
 
 @media (max-width: 860px) {
   .about-panel {
     grid-template-columns: 1fr;
+    gap: 18px;
   }
 }
 
+.about-text {
+  max-width: 68ch;
+}
+
 .about-text p {
-  margin: 0 0 10px;
-  font-size: 12.5px;
-  line-height: 1.6;
+  margin: 0 0 12px;
+  font-size: var(--fs-body);
+  line-height: 1.65;
   color: var(--text-primary);
+  text-wrap: pretty;
 }
 
 .about-text p:last-child {
@@ -23,8 +29,8 @@
 }
 
 .about-term {
-  color: var(--amber);
-  font-weight: 700;
+  color: var(--accent-text);
+  font-weight: 600;
 }
 
 .about-glossary {
@@ -33,20 +39,34 @@
   padding-left: 20px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
+}
+
+@media (max-width: 860px) {
+  .about-glossary {
+    border-left: 0;
+    padding-left: 0;
+    border-top: 1px solid var(--gridline);
+    padding-top: 16px;
+  }
 }
 
 .about-glossary dt {
-  color: var(--amber);
-  font-size: 11.5px;
-  font-weight: 700;
+  color: var(--heading);
+  font-size: var(--fs-micro);
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.06em;
 }
 
 .about-glossary dd {
   margin: 2px 0 0;
-  font-size: 12px;
-  line-height: 1.5;
+  font-size: var(--fs-small);
+  line-height: 1.55;
   color: var(--text-muted);
+}
+
+.about-glossary code {
+  font-family: inherit;
+  color: var(--text-primary);
 }

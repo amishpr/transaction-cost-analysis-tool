@@ -1,0 +1,56 @@
+/* Rows share one grid through subgrid, so labels, bars, and values line up across the list. */
+.share-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: fit-content(15rem) minmax(2.5rem, 1fr) auto auto;
+  column-gap: 12px;
+}
+
+.share-row {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: subgrid;
+  align-items: center;
+  padding: 5px 0;
+  font-size: var(--fs-small);
+}
+
+.share-row + .share-row {
+  border-top: 1px solid var(--gridline);
+}
+
+.share-row:hover {
+  background: var(--row-hover);
+}
+
+.share-label {
+  color: var(--text-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.share-track {
+  display: block;
+  height: 8px;
+}
+
+.share-bar {
+  display: block;
+  height: 100%;
+  min-width: 2px;
+  background: var(--share);
+}
+
+.share-pct {
+  color: var(--text-primary);
+  text-align: right;
+}
+
+.share-notional {
+  color: var(--text-muted);
+  text-align: right;
+  min-width: 6ch;
+}

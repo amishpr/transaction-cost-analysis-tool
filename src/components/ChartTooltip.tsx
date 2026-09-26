@@ -1,3 +1,5 @@
+import { fmtBps, fmtUsd } from "../lib/format";
+import type { TradeMetrics } from "../types";
 import "./ChartTooltip.css";
 
 interface ChartTooltipRow {
@@ -25,5 +27,27 @@ export function ChartTooltip({ active, title, rows }: ChartTooltipProps) {
         </div>
       ))}
     </div>
+  );
+}
+
+/** Tooltip for a single trade, shared by the per-trade scatter charts. */
+export function TradeTooltip({ active, trade }: { active?: boolean; trade?: TradeMetrics }) {
+  if (!trade) return null;
+  return (
+    <ChartTooltip
+      active={active}
+      title={`${trade.symbol}, ${trade.date}`}
+      rows={[
+        {
+          label: "Side",
+          value: trade.side,
+          color: trade.side === "BUY" ? "var(--buy)" : "var(--sell)",
+        },
+        { label: "Vs arrival", value: fmtBps(trade.arrivalSlippageBps) },
+        { label: "Notional", value: fmtUsd(trade.notional) },
+        { label: "Strategy", value: trade.strategy },
+        { label: "Venue", value: trade.venue },
+      ]}
+    />
   );
 }

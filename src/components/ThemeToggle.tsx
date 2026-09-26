@@ -3,42 +3,29 @@ import "./HeaderActions.css";
 
 interface ThemeToggleProps {
   theme: Theme;
-  onToggle: () => void;
+  onChange: (theme: Theme) => void;
 }
 
-function SunIcon() {
-  return (
-    <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false">
-      <circle cx="8" cy="8" r="3" fill="currentColor" />
-      <g stroke="currentColor" strokeWidth="1.5" strokeLinecap="square">
-        <path d="M8 1v2M8 13v2M1 8h2M13 8h2M3 3l1.4 1.4M11.6 11.6L13 13M3 13l1.4-1.4M11.6 4.4L13 3" />
-      </g>
-    </svg>
-  );
-}
+const OPTIONS: { value: Theme; label: string }[] = [
+  { value: "dark", label: "Dark" },
+  { value: "light", label: "Light" },
+];
 
-function MoonIcon() {
+/** Two keys side by side, the current theme lit in amber, so the state is never ambiguous. */
+export function ThemeToggle({ theme, onChange }: ThemeToggleProps) {
   return (
-    <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false">
-      <path d="M13.5 9.6A6 6 0 0 1 6.4 2.5a6 6 0 1 0 7.1 7.1z" fill="currentColor" />
-    </svg>
-  );
-}
-
-export function ThemeToggle({ theme, onToggle }: ThemeToggleProps) {
-  const goingLight = theme === "dark";
-  const label = goingLight ? "Light" : "Dark";
-
-  return (
-    <button
-      type="button"
-      className="header-button"
-      onClick={onToggle}
-      aria-label={`Switch to ${label.toLowerCase()} theme`}
-      title={`Switch to ${label.toLowerCase()} theme`}
-    >
-      {goingLight ? <SunIcon /> : <MoonIcon />}
-      <span>{label}</span>
-    </button>
+    <div className="theme-toggle" role="group" aria-label="Color theme">
+      {OPTIONS.map((opt) => (
+        <button
+          key={opt.value}
+          type="button"
+          className="theme-option"
+          aria-pressed={theme === opt.value}
+          onClick={() => onChange(opt.value)}
+        >
+          {opt.label}
+        </button>
+      ))}
+    </div>
   );
 }

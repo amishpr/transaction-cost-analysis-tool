@@ -2,33 +2,38 @@ import { useMemo, useState } from "react";
 import "./App.css";
 import { AboutPanel } from "./components/AboutPanel";
 import { CostByGroupChart } from "./components/CostByGroupChart";
+import { FileDropOverlay } from "./components/FileDropOverlay";
 import { FilterBar } from "./components/FilterBar";
+import { RepoLink } from "./components/RepoLink";
 import { ShareBreakdownChart } from "./components/ShareBreakdownChart";
 import { SlippageHistogram } from "./components/SlippageHistogram";
 import { SlippageTimeline } from "./components/SlippageTimeline";
+import { SlippageVsSizeChart } from "./components/SlippageVsSizeChart";
 import { StatTile } from "./components/StatTile";
-import { SymbolImpactBubbleChart } from "./components/SymbolImpactBubbleChart";
-import { RepoLink } from "./components/RepoLink";
 import { ThemeToggle } from "./components/ThemeToggle";
 import { TradesTable } from "./components/TradesTable";
-import { UploadPanel } from "./components/UploadPanel";
+import { UploadPanel, type DataSource } from "./components/UploadPanel";
 import { downloadCsv, tradesToCsv } from "./lib/csv";
 import { parseTradesFile } from "./lib/fileImport";
+import { fmtBps, fmtUsd, fmtUsdCompact, fmtUsdFit, polarity } from "./lib/format";
 import { classifySymbol } from "./lib/refData";
 import { generateSampleTrades } from "./lib/sampleData";
 import { computeMetrics, groupBy, summarize } from "./lib/tca";
 import { useTheme } from "./lib/useTheme";
 import type { Filters, RawTrade } from "./types";
 
-const fmtBps = (v: number) => `${v >= 0 ? "+" : ""}${v.toFixed(1)} bps`;
-const fmtUsd = (v: number) =>
-  v.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
+const ALL: Filters = { symbol: "ALL", side: "ALL", strategy: "ALL" };
+const SAMPLE_SOURCE: DataSource = { kind: "sample", name: "Sample data" };
+
+const tone = (bps: number) => (polarity(bps) === "cost" ? "bad" : polarity(bps) === "improve" ? "good" : "neutral");
 
 function App() {
-  const { theme, toggleTheme } = useTheme();
+  const { theme, setTheme } = useTheme();
   const [rawTrades, setRawTrades] = useState<RawTrade[]>(() => generateSampleTrades());
+  const [source, setSource] = useState<DataSource>(SAMPLE_SOURCE);
+  const [loadingName, setLoadingName] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [filters, setFilters] = useState<Filters>({ symbol: "ALL", side: "ALL", strategy: "ALL" });
+  const [filters, setFilters] = useState<Filters>(ALL);
 
   const allMetrics = useMemo(() => rawTrades.map(computeMetrics), [rawTrades]);
 
@@ -66,126 +71,226 @@ function App() {
   );
 
   const handleFile = async (file: File) => {
+    setLoadingName(file.name);
     try {
       const trades = await parseTradesFile(file);
+      if (trades.length === 0) throw new Error("That file has a header row but no trades.");
       setRawTrades(trades);
-      setFilters({ symbol: "ALL", side: "ALL", strategy: "ALL" });
+      setSource({ kind: "file", name: file.name });
+      setFilters(ALL);
       setError(null);
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Could not parse that file.");
+      const reason = e instanceof Error ? e.message : "The file could not be parsed.";
+      setError(`Could not load ${file.name}. ${reason}`);
+    } finally {
+      setLoadingName(null);
     }
   };
 
+  const loadSample = () => {
+    setRawTrades(generateSampleTrades());
+    setSource(SAMPLE_SOURCE);
+    setFilters(ALL);
+    setError(null);
+  };
+
+  const improvedCount = Math.round((summary.pctPriceImprovement * summary.tradeCount) / 100);
+
   return (
-    <main className="app">
-      <header className="app-header">
-        <div>
-          <h1>
+    <div className="app">
+      <header className="topbar">
+        <div className="brand">
+          <h1 className="brand-title">
             TRANSACTION COST ANALYSIS TOOL{" "}
-            <span className="app-header-go" aria-hidden="true">
+            <span className="go-key" aria-hidden="true">
               &lt;GO&gt;
             </span>
           </h1>
-          <p>TRANSACTION COST ANALYSIS — SLIPPAGE VS. ARRIVAL PRICE AND VWAP</p>
+          <p className="brand-sub">
+            Slippage against arrival price and VWAP, by symbol, strategy, and venue
+          </p>
         </div>
-        <div className="header-actions">
+        <nav className="header-actions" aria-label="Page">
           <RepoLink />
-          <ThemeToggle theme={theme} onToggle={toggleTheme} />
-        </div>
+          <ThemeToggle theme={theme} onChange={setTheme} />
+        </nav>
       </header>
 
-      <AboutPanel />
+      <main className="dashboard">
+        <section className="page-section" id="about">
+          <AboutPanel />
+        </section>
 
-      <UploadPanel
-        onFile={handleFile}
-        onLoadSample={() => {
-          setRawTrades(generateSampleTrades());
-          setFilters({ symbol: "ALL", side: "ALL", strategy: "ALL" });
-          setError(null);
-        }}
-        onExport={() => downloadCsv("tca-trades.csv", tradesToCsv(filtered))}
-        error={error}
-      />
-
-      <FilterBar filters={filters} onChange={setFilters} symbols={symbols} strategies={strategies} />
-
-      <section className="stat-grid">
-        <StatTile label="Trades analyzed" value={summary.tradeCount.toLocaleString()} />
-        <StatTile label="Total notional" value={fmtUsd(summary.totalNotional)} />
-        <StatTile
-          label="Total shares"
-          value={summary.totalQuantity.toLocaleString()}
-          sublabel="Basket quantity"
-        />
-        <StatTile
-          label="Avg slippage vs arrival"
-          value={fmtBps(summary.avgArrivalBps)}
-          sublabel="Notional-weighted"
-          tone={summary.avgArrivalBps <= 0 ? "good" : "bad"}
-        />
-        <StatTile
-          label="Avg slippage vs VWAP"
-          value={fmtBps(summary.avgVwapBps)}
-          sublabel="Notional-weighted"
-          tone={summary.avgVwapBps <= 0 ? "good" : "bad"}
-        />
-        <StatTile
-          label="Total cost vs arrival"
-          value={fmtUsd(summary.totalArrivalCostUsd)}
-          tone={summary.totalArrivalCostUsd <= 0 ? "good" : "bad"}
-        />
-        <StatTile
-          label="Trades with price improvement"
-          value={`${summary.pctPriceImprovement.toFixed(0)}%`}
-        />
-      </section>
-
-      <section className="page-section">
-        <div className="section-header">
-          <h2 className="section-title">Execution cost</h2>
-          <span className="section-subtitle">Slippage vs. arrival price by symbol, strategy, and over time</span>
-        </div>
-        <div className="chart-grid">
-          <CostByGroupChart title="Cost by symbol" subtitle="Notional-weighted avg vs arrival price" data={bySymbol} />
-          <CostByGroupChart title="Cost by strategy" subtitle="Notional-weighted avg vs arrival price" data={byStrategy} />
-          <SlippageHistogram values={filtered.map((t) => t.arrivalSlippageBps)} />
-          <SlippageTimeline trades={filtered} />
-        </div>
-      </section>
-
-      <section className="page-section">
-        <div className="section-header">
-          <h2 className="section-title">Portfolio composition</h2>
-          <span className="section-subtitle">Venue routing, sector, market cap, and size vs. slippage</span>
-        </div>
-        <div className="chart-grid">
-          <ShareBreakdownChart
-            title="Venue breakdown"
-            subtitle="Share of notional by execution venue"
-            data={byVenue}
+        <section className="toolbar" aria-label="Data and filters">
+          <UploadPanel
+            source={source}
+            tradeCount={rawTrades.length}
+            loadingName={loadingName}
+            onFile={handleFile}
+            onLoadSample={loadSample}
           />
-          <SymbolImpactBubbleChart data={bySymbol} />
-          <ShareBreakdownChart
-            title="Sector breakdown"
-            subtitle="Share of notional by sector"
-            data={bySector}
+          <FilterBar
+            filters={filters}
+            onChange={setFilters}
+            onClear={() => setFilters(ALL)}
+            symbols={symbols}
+            strategies={strategies}
           />
-          <ShareBreakdownChart
-            title="Market cap breakdown"
-            subtitle="Share of notional by cap tier"
-            data={byCapTier}
-          />
-        </div>
-      </section>
+          {error && (
+            <p className="toolbar-error" role="alert">
+              {error}
+            </p>
+          )}
+        </section>
 
-      <section className="page-section">
-        <div className="section-header">
-          <h2 className="section-title">Trade blotter</h2>
-          <span className="section-subtitle">{filtered.length} trades</span>
-        </div>
-        <TradesTable trades={filtered} />
-      </section>
-    </main>
+        {filtered.length === 0 ? (
+          <section className="empty-state" aria-live="polite">
+            <h2 className="empty-state-title">No trades match these filters</h2>
+            <p>
+              None of the {rawTrades.length.toLocaleString()} loaded trades fit this combination
+              of symbol, side, and strategy.
+            </p>
+            <button type="button" className="btn" onClick={() => setFilters(ALL)}>
+              Clear filters
+            </button>
+          </section>
+        ) : (
+          <>
+            <section aria-label="Summary">
+              <dl className="kpi-strip">
+                <StatTile
+                  hero
+                  label="Avg slippage vs arrival"
+                  value={fmtBps(summary.avgArrivalBps)}
+                  sublabel="Notional-weighted. Positive is a cost."
+                  tone={tone(summary.avgArrivalBps)}
+                />
+                <StatTile
+                  label="Avg vs VWAP"
+                  value={fmtBps(summary.avgVwapBps)}
+                  sublabel="Notional-weighted"
+                  tone={tone(summary.avgVwapBps)}
+                />
+                <StatTile
+                  label="Cost vs arrival"
+                  value={fmtUsdFit(summary.totalArrivalCostUsd)}
+                  title={fmtUsd(summary.totalArrivalCostUsd)}
+                  sublabel="Total, in dollars"
+                  tone={
+                    summary.totalArrivalCostUsd > 0.5
+                      ? "bad"
+                      : summary.totalArrivalCostUsd < -0.5
+                        ? "good"
+                        : "neutral"
+                  }
+                />
+                <StatTile
+                  label="Price improved"
+                  value={`${summary.pctPriceImprovement.toFixed(0)}%`}
+                  sublabel={`${improvedCount.toLocaleString()} of ${summary.tradeCount.toLocaleString()} trades`}
+                />
+                <StatTile
+                  label="Trades"
+                  value={summary.tradeCount.toLocaleString()}
+                  sublabel={`${bySymbol.length} ${bySymbol.length === 1 ? "symbol" : "symbols"}`}
+                />
+                <StatTile
+                  label="Notional"
+                  value={fmtUsdCompact(summary.totalNotional)}
+                  title={fmtUsd(summary.totalNotional)}
+                  sublabel={fmtUsd(summary.totalNotional)}
+                />
+                <StatTile
+                  label="Shares"
+                  value={summary.totalQuantity.toLocaleString()}
+                  sublabel="Total quantity"
+                />
+              </dl>
+            </section>
+
+            <section className="page-section" aria-labelledby="execution-cost">
+              <div className="section-header">
+                <h2 className="section-title" id="execution-cost">
+                  Execution cost
+                </h2>
+                <p className="section-subtitle">
+                  Slippage vs. arrival price by symbol, strategy, size, and over time
+                </p>
+              </div>
+              <div className="chart-grid">
+                <CostByGroupChart
+                  title="Cost by symbol"
+                  subtitle="Notional-weighted avg vs arrival, in bps"
+                  data={bySymbol}
+                />
+                <CostByGroupChart
+                  title="Cost by strategy"
+                  subtitle="Notional-weighted avg vs arrival, in bps"
+                  data={byStrategy}
+                />
+                <SlippageHistogram values={filtered.map((t) => t.arrivalSlippageBps)} />
+                <SlippageVsSizeChart trades={filtered} />
+                <SlippageTimeline trades={filtered} />
+              </div>
+            </section>
+
+            <section className="page-section" aria-labelledby="composition">
+              <div className="section-header">
+                <h2 className="section-title" id="composition">
+                  Portfolio composition
+                </h2>
+                <p className="section-subtitle">Share of notional by venue, sector, and market cap</p>
+              </div>
+              <div className="chart-grid chart-grid-3">
+                <ShareBreakdownChart
+                  title="Venue breakdown"
+                  subtitle="Share of notional by execution venue"
+                  data={byVenue}
+                />
+                <ShareBreakdownChart
+                  title="Sector breakdown"
+                  subtitle="Share of notional by sector"
+                  data={bySector}
+                />
+                <ShareBreakdownChart
+                  title="Market cap breakdown"
+                  subtitle="Share of notional by cap tier"
+                  data={byCapTier}
+                />
+              </div>
+            </section>
+
+            <section className="page-section" aria-labelledby="blotter">
+              <div className="section-header">
+                <h2 className="section-title" id="blotter">
+                  Trade blotter
+                </h2>
+                <p className="section-subtitle">
+                  {filtered.length === rawTrades.length
+                    ? `${filtered.length.toLocaleString()} trades`
+                    : `${filtered.length.toLocaleString()} of ${rawTrades.length.toLocaleString()} trades`}
+                  . Slippage in bps.
+                </p>
+                <button
+                  type="button"
+                  className="btn section-action"
+                  onClick={() => downloadCsv("tca-trades.csv", tradesToCsv(filtered))}
+                >
+                  Export CSV
+                </button>
+              </div>
+              <TradesTable trades={filtered} />
+            </section>
+          </>
+        )}
+      </main>
+
+      <footer className="footer">
+        <p>Runs entirely in the browser. Uploaded files are never sent to a server.</p>
+      </footer>
+
+      <FileDropOverlay onFile={handleFile} />
+    </div>
   );
 }
 

@@ -17,7 +17,7 @@ function GitHubIcon() {
 export function RepoLink() {
   return (
     <a
-      className="header-button"
+      className="btn"
       href={REPO_URL}
       target="_blank"
       rel="noreferrer"

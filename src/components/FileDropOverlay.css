@@ -1,0 +1,32 @@
+/* Z-index scale: 1 = sticky table header, 10 = drop overlay. Nothing else is layered. */
+.drop-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  display: grid;
+  padding: 16px;
+  background: var(--overlay);
+  pointer-events: none;
+}
+
+.drop-overlay-frame {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: 2px dashed var(--accent);
+}
+
+.drop-overlay-title {
+  color: var(--heading);
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.drop-overlay-sub {
+  color: var(--text-muted);
+  font-size: var(--fs-small);
+}

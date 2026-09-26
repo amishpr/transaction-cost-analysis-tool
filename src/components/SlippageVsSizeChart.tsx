@@ -9,42 +9,53 @@ import {
   YAxis,
   ZAxis,
 } from "recharts";
-import { tickDecimals, zeroAnchoredTicks } from "../lib/scale";
+import { fmtUsdCompact } from "../lib/format";
+import { niceTicks, tickDecimals, zeroAnchoredTicks } from "../lib/scale";
 import type { TradeMetrics } from "../types";
 import { ChartCard, ChartLegend } from "./ChartCard";
 import { AXIS_LINE, AXIS_TICK, SIDE_LEGEND } from "./chartTheme";
 import { TradeTooltip } from "./ChartTooltip";
 
-interface SlippageTimelineProps {
+interface SlippageVsSizeChartProps {
   trades: TradeMetrics[];
 }
 
-export function SlippageTimeline({ trades }: SlippageTimelineProps) {
+// Compact dollar ticks without the forced decimal: "$250K", "$1M".
+const fmtTickUsd = (v: number) => fmtUsdCompact(v).replace(".0", "");
+
+/**
+ * One point per trade, order notional against slippage. Larger clips tend to move the
+ * price against the trader, so a rising cloud to the right is market impact.
+ */
+export function SlippageVsSizeChart({ trades }: SlippageVsSizeChartProps) {
   const buys = trades.filter((t) => t.side === "BUY");
   const sells = trades.filter((t) => t.side === "SELL");
+  const xTicks = niceTicks(0, Math.max(1, ...trades.map((t) => t.notional)), 5);
   const yTicks = zeroAnchoredTicks(trades.map((t) => t.arrivalSlippageBps));
   const decimals = tickDecimals(yTicks);
 
   return (
     <ChartCard
-      title="Slippage over time"
-      subtitle="Each point is one trade, sized by notional"
+      title="Slippage vs. order size"
+      subtitle="Each point is one trade. A cloud that rises to the right is market impact."
       legend={<ChartLegend items={SIDE_LEGEND} />}
-      wide
     >
-      <ResponsiveContainer width="100%" height={280}>
+      <ResponsiveContainer width="100%" height={260}>
         <ScatterChart margin={{ top: 8, right: 16, bottom: 0, left: -8 }}>
           <CartesianGrid stroke="var(--gridline)" />
           <XAxis
-            dataKey="date"
-            type="category"
-            allowDuplicatedCategory={false}
+            type="number"
+            dataKey="notional"
+            name="Notional"
+            domain={[0, xTicks[xTicks.length - 1]]}
+            ticks={xTicks}
             tick={AXIS_TICK}
             axisLine={AXIS_LINE}
             tickLine={false}
-            minTickGap={36}
+            tickFormatter={fmtTickUsd}
           />
           <YAxis
+            type="number"
             dataKey="arrivalSlippageBps"
             name="Slippage"
             domain={[yTicks[0], yTicks[yTicks.length - 1]]}
@@ -54,7 +65,7 @@ export function SlippageTimeline({ trades }: SlippageTimelineProps) {
             tickLine={false}
             tickFormatter={(v: number) => v.toFixed(decimals)}
           />
-          <ZAxis dataKey="notional" range={[24, 220]} />
+          <ZAxis range={[56, 56]} />
           <ReferenceLine y={0} stroke="var(--text-muted)" />
           <Tooltip
             cursor={{ stroke: "var(--baseline)" }}

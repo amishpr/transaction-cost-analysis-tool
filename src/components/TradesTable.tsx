@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { fmtSigned, fmtUsd, polarity } from "../lib/format";
 import type { TradeMetrics } from "../types";
 import "./TradesTable.css";
 
@@ -6,14 +7,47 @@ interface TradesTableProps {
   trades: TradeMetrics[];
 }
 
-type SortKey = "date" | "symbol" | "notional" | "arrivalSlippageBps" | "vwapSlippageBps";
+type SortKey =
+  | "date"
+  | "symbol"
+  | "quantity"
+  | "notional"
+  | "arrivalSlippageBps"
+  | "vwapSlippageBps"
+  | "strategy"
+  | "venue";
 
-function costBadge(bps: number): { label: string; icon: string; className: string } {
+interface Column {
+  label: string;
+  sort?: SortKey;
+  num?: boolean;
+}
+
+const COLUMNS: Column[] = [
+  { label: "Date", sort: "date" },
+  { label: "Symbol", sort: "symbol" },
+  { label: "Side" },
+  { label: "Qty", sort: "quantity", num: true },
+  { label: "Arrival", num: true },
+  { label: "Exec", num: true },
+  { label: "VWAP", num: true },
+  { label: "Notional", sort: "notional", num: true },
+  { label: "Vs arrival", sort: "arrivalSlippageBps", num: true },
+  { label: "Vs VWAP", sort: "vwapSlippageBps", num: true },
+  { label: "Status" },
+  { label: "Strategy", sort: "strategy" },
+  { label: "Venue", sort: "venue" },
+];
+
+// Only unusual fills get a badge, so the rows worth a look stand out from the rest.
+function costBadge(bps: number): { label: string; icon: string; className: string } | null {
   if (bps <= -3) return { label: "Improved", icon: "▼", className: "badge-good" };
   if (bps >= 15) return { label: "High", icon: "▲", className: "badge-critical" };
   if (bps >= 6) return { label: "Elevated", icon: "▲", className: "badge-warning" };
-  return { label: "Normal", icon: "•", className: "badge-neutral" };
+  return null;
 }
+
+const POLARITY_CLASS = { cost: "cost-bad", improve: "cost-good", neutral: "" } as const;
 
 export function TradesTable({ trades }: TradesTableProps) {
   const [sortKey, setSortKey] = useState<SortKey>("date");
@@ -39,31 +73,37 @@ export function TradesTable({ trades }: TradesTableProps) {
     }
   };
 
-  const arrow = (key: SortKey) => (key === sortKey ? (sortDir === 1 ? "↑" : "↓") : "");
-
   return (
-    <div className="trades-table-wrap">
+    <div className="trades-table-wrap" tabIndex={0} aria-label="Trade blotter, scrollable">
       <table className="trades-table">
         <thead>
           <tr>
-            <th onClick={() => toggleSort("date")}>Date {arrow("date")}</th>
-            <th onClick={() => toggleSort("symbol")}>Symbol {arrow("symbol")}</th>
-            <th>Side</th>
-            <th className="num">Qty</th>
-            <th className="num">Arrival</th>
-            <th className="num">Exec</th>
-            <th className="num">VWAP</th>
-            <th className="num" onClick={() => toggleSort("notional")}>
-              Notional {arrow("notional")}
-            </th>
-            <th className="num" onClick={() => toggleSort("arrivalSlippageBps")}>
-              vs Arrival (bps) {arrow("arrivalSlippageBps")}
-            </th>
-            <th className="num" onClick={() => toggleSort("vwapSlippageBps")}>
-              vs VWAP (bps) {arrow("vwapSlippageBps")}
-            </th>
-            <th>Status</th>
-            <th>Strategy</th>
+            {COLUMNS.map((col) => {
+              const active = col.sort !== undefined && col.sort === sortKey;
+              return (
+                <th
+                  key={col.label}
+                  scope="col"
+                  className={col.num ? "num" : undefined}
+                  aria-sort={active ? (sortDir === 1 ? "ascending" : "descending") : undefined}
+                >
+                  {col.sort ? (
+                    <button
+                      type="button"
+                      className={`th-sort${active ? " th-sort-active" : ""}`}
+                      onClick={() => toggleSort(col.sort!)}
+                    >
+                      {col.label}
+                      <span className="th-sort-arrow" aria-hidden="true">
+                        {active ? (sortDir === 1 ? "↑" : "↓") : "↕"}
+                      </span>
+                    </button>
+                  ) : (
+                    col.label
+                  )}
+                </th>
+              );
+            })}
           </tr>
         </thead>
         <tbody>
@@ -72,7 +112,7 @@ export function TradesTable({ trades }: TradesTableProps) {
             return (
               <tr key={t.id}>
                 <td className="tabular">{t.date}</td>
-                <td>{t.symbol}</td>
+                <td className="cell-symbol">{t.symbol}</td>
                 <td>
                   <span className={`side-tag side-${t.side.toLowerCase()}`}>{t.side}</span>
                 </td>
@@ -80,29 +120,29 @@ export function TradesTable({ trades }: TradesTableProps) {
                 <td className="num tabular">{t.arrivalPrice.toFixed(2)}</td>
                 <td className="num tabular">{t.execPrice.toFixed(2)}</td>
                 <td className="num tabular">{t.vwapPrice.toFixed(2)}</td>
-                <td className="num tabular">
-                  {t.notional.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 })}
+                <td className="num tabular">{fmtUsd(t.notional)}</td>
+                <td className={`num tabular ${POLARITY_CLASS[polarity(t.arrivalSlippageBps)]}`}>
+                  {fmtSigned(t.arrivalSlippageBps)}
                 </td>
-                <td className={`num tabular ${t.arrivalSlippageBps >= 0 ? "cost-bad" : "cost-good"}`}>
-                  {t.arrivalSlippageBps >= 0 ? "+" : ""}
-                  {t.arrivalSlippageBps.toFixed(1)}
-                </td>
-                <td className={`num tabular ${t.vwapSlippageBps >= 0 ? "cost-bad" : "cost-good"}`}>
-                  {t.vwapSlippageBps >= 0 ? "+" : ""}
-                  {t.vwapSlippageBps.toFixed(1)}
+                <td className={`num tabular ${POLARITY_CLASS[polarity(t.vwapSlippageBps)]}`}>
+                  {fmtSigned(t.vwapSlippageBps)}
                 </td>
                 <td>
-                  <span className={`badge ${badge.className}`}>
-                    <span aria-hidden="true">{badge.icon}</span> {badge.label}
-                  </span>
+                  {badge ? (
+                    <span className={`badge ${badge.className}`}>
+                      <span aria-hidden="true">{badge.icon}</span> {badge.label}
+                    </span>
+                  ) : (
+                    <span className="status-normal">Normal</span>
+                  )}
                 </td>
                 <td>{t.strategy}</td>
+                <td>{t.venue}</td>
               </tr>
             );
           })}
         </tbody>
       </table>
-      {sorted.length === 0 && <div className="trades-table-empty">No trades match the current filters.</div>}
     </div>
   );
 }
